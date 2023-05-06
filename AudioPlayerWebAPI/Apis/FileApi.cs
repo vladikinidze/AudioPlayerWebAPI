@@ -8,6 +8,7 @@ namespace AudioPlayerWebAPI.Apis
                 .Produces<string>(StatusCodes.Status200OK)
                 .Produces(StatusCodes.Status400BadRequest)
                 .Produces(StatusCodes.Status500InternalServerError);
+
             application.MapGet("/api/download", Get)
                 .Produces<string>(StatusCodes.Status200OK)
                 .Produces(StatusCodes.Status400BadRequest);
