@@ -40,7 +40,7 @@ namespace AudioPlayerWebAPI.Apis
                 .Produces(StatusCodes.Status404NotFound);
         }
 
-        [Authorize]
+        [AllowAnonymous]
         private async Task<IResult> Get(IPlaylistRepository repository) =>
                     Results.Ok(await _repository.GetPlaylistsAsync());
 

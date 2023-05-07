@@ -1,6 +1,3 @@
-using AudioPlayerWebAPI.Repositories;
-using Microsoft.OpenApi.Models;
-
 namespace AudioPlayerWebAPI
 {
     public class Program
@@ -58,10 +55,14 @@ namespace AudioPlayerWebAPI
                         }
                     });
                 });
+                services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
                 services.AddDbContext<AudioPlayerDbContext>(options =>
                 {
                     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
                 });
+                services.AddScoped<IValidator<User>, UserValidator>();
+                services.AddScoped<IValidator<RegisterDto>, RegisterUserDtoValidator>();
+                services.AddScoped<IValidator<LoginDto>, LoginUserDtoValidator>();
                 services.AddScoped<ITrackRepository, TrackRepository>();
                 services.AddScoped<IPlaylistRepository, PlaylistRepository>();
                 services.AddScoped<IUserRepository, UserRepository>();
@@ -88,6 +89,7 @@ namespace AudioPlayerWebAPI
                 builder.Services.AddTransient<IApi, PlaylistApi>();
                 builder.Services.AddTransient<IApi, FileApi>();
                 builder.Services.AddTransient<IApi, UserApi>();
+                builder.Services.AddTransient<IApi, AuthApi>();
             }
 
             void Configure(WebApplication app)

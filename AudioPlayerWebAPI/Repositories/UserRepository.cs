@@ -11,14 +11,14 @@
         }
 
 
-        public async Task<User> AutenticateUserAsync(UserDto userDto) =>
+        public async Task<User> AutenticateUserAsync(LoginDto userDto) =>
             (await _context.Users
                 .FirstOrDefaultAsync(x => x.Email == userDto.Email && x.Password == Hash.GetSha1Hash(userDto.Password)))!;
 
         public async Task<User> GetUserByIdAsync(Guid userId) =>
             (await _context.Users.FindAsync(userId))!;
 
-        public async Task<User> RegisterateUserAsync(UserDto userDto)
+        public async Task<User> RegisterateUserAsync(RegisterDto userDto)
         {
             var userFromDb = await _context.Users
                 .FirstOrDefaultAsync(x => x.Email == userDto.Email);
