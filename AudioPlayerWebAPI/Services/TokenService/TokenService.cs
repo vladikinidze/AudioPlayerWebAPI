@@ -33,6 +33,7 @@ namespace AudioPlayerWebAPI.Services.TokenService
                 Created = DateTime.Now,
                 Expiration = DateTime.Now.AddDays(15),
                 UserId = user.Id,
+                User = user
             };
         }
     }

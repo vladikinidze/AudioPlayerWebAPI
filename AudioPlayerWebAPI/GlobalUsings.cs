@@ -8,7 +8,9 @@ global using AudioPlayerWebAPI.Apis;
 global using AudioPlayerWebAPI.Apis.Interfaces;
 global using AudioPlayerWebAPI.Services.TokenService;
 global using AudioPlayerWebAPI.Services;
-
+global using AudioPlayerWebAPI.Validators;
+global using FluentValidation;
+global using AutoMapper;
 global using System.Text;
 global using System.Text.Json.Serialization;
 global using System.Security.Claims;
@@ -23,3 +25,4 @@ global using Microsoft.AspNetCore.Mvc;
 global using Microsoft.AspNetCore.Authorization;
 global using Microsoft.AspNetCore.Authentication.JwtBearer;
 global using Microsoft.AspNetCore.StaticFiles;
+global using Microsoft.OpenApi.Models;

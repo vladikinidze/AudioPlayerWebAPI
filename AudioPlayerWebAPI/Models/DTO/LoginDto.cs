@@ -1,9 +1,7 @@
 ﻿namespace AudioPlayerWebAPI.Models.DTO
 {
-    public class UserDto
+    public class LoginDto
     {
-        public string Username { get; set; } = string.Empty;
-
         [Required(ErrorMessage = "The Email is required")]
         [RegularExpression(@"[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}", ErrorMessage = "Invalid Email")]
         [EmailAddress(ErrorMessage = "Invalid Email")]

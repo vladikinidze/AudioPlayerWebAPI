@@ -23,7 +23,13 @@
             }
             else
             {
-                _context.RefreshTokens.Update(refreshToken);
+                token.AccessToken = refreshToken.AccessToken;
+                token.RefreshToken = refreshToken.RefreshToken;
+                token.UserId = refreshToken.UserId;
+                token.User = refreshToken.User;
+                token.Created = refreshToken.Created;
+                token.Expiration = refreshToken.Expiration;
+                _context.RefreshTokens.Update(token);
             }
         }
 
