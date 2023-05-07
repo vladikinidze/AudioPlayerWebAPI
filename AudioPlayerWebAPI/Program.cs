@@ -63,6 +63,8 @@ namespace AudioPlayerWebAPI
                 services.AddScoped<IValidator<User>, UserValidator>();
                 services.AddScoped<IValidator<RegisterDto>, RegisterUserDtoValidator>();
                 services.AddScoped<IValidator<LoginDto>, LoginUserDtoValidator>();
+                services.AddScoped<IValidator<TrackDto>, TrackDtoValidator>();
+                services.AddScoped<IValidator<Playlist>, PlaylistValidator>();
                 services.AddScoped<ITrackRepository, TrackRepository>();
                 services.AddScoped<IPlaylistRepository, PlaylistRepository>();
                 services.AddScoped<IUserRepository, UserRepository>();

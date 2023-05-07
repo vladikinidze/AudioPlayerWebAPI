@@ -11,8 +11,8 @@
         public async Task<List<Playlist>> GetPlaylistsAsync() =>
             await _context.Playlists.ToListAsync();
 
-        public async Task<List<Playlist>> GetUserPlaylists(Guid playlistId) => 
-            await _context.Playlists.Where(x => x.UserId == playlistId).ToListAsync();
+        public async Task<List<Playlist>> GetUserPlaylists(Guid userId) => 
+            await _context.Playlists.Where(x => x.UserId == userId).ToListAsync();
 
         public async Task<Playlist> GetPlaylistAsync(Guid playlistId) =>
             (await _context.Playlists.FindAsync(playlistId))!;
