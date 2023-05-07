@@ -15,7 +15,8 @@ namespace AudioPlayerWebAPI
 
             Configure(app);
 
-            var apis = app.Services.GetServices<IApi>();
+            using var scope = app.Services.CreateScope();
+            var apis = scope.ServiceProvider.GetServices<IApi>();
             foreach (var api in apis)
             {
                 if (api is null) throw new InvalidProgramException("Api not found");
@@ -64,6 +65,7 @@ namespace AudioPlayerWebAPI
                 services.AddScoped<ITrackRepository, TrackRepository>();
                 services.AddScoped<IPlaylistRepository, PlaylistRepository>();
                 services.AddScoped<IUserRepository, UserRepository>();
+                services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
                 services.AddSingleton<ITokenService>(new TokenService());
                 services.AddAuthorization();
                 services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

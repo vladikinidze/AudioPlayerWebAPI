@@ -18,7 +18,7 @@
         public async Task<User> GetUserByIdAsync(Guid userId) =>
             (await _context.Users.FindAsync(userId))!;
 
-        public async Task<User> InsertUserAsync(UserDto userDto)
+        public async Task<User> RegisterateUserAsync(UserDto userDto)
         {
             var userFromDb = await _context.Users
                 .FirstOrDefaultAsync(x => x.Email == userDto.Email);

@@ -1,17 +1,21 @@
 global using AudioPlayerWebAPI.Models;
-global using AudioPlayerWebAPI.Repositories;
 global using AudioPlayerWebAPI.Models.EntityTypeConfiguration;
+global using AudioPlayerWebAPI.Models.DTO;
+global using AudioPlayerWebAPI.Models.Requests;
+global using AudioPlayerWebAPI.Models.Responses;
+global using AudioPlayerWebAPI.Repositories;
 global using AudioPlayerWebAPI.Apis;
 global using AudioPlayerWebAPI.Apis.Interfaces;
 global using AudioPlayerWebAPI.Services.TokenService;
 global using AudioPlayerWebAPI.Services;
-global using AudioPlayerWebAPI.Models.DTO;
+
 global using System.Text;
 global using System.Text.Json.Serialization;
 global using System.Security.Claims;
 global using System.Security.Cryptography;
 global using System.IdentityModel.Tokens.Jwt;
 global using System.ComponentModel.DataAnnotations;
+global using System.ComponentModel.DataAnnotations.Schema;
 global using Microsoft.IdentityModel.Tokens;
 global using Microsoft.EntityFrameworkCore;
 global using Microsoft.EntityFrameworkCore.Metadata.Builders;
