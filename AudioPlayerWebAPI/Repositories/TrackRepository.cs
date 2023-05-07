@@ -1,4 +1,4 @@
-﻿namespace AudioPlayerWebAPI.Models.Repositories
+﻿namespace AudioPlayerWebAPI.Repositories
 {
     public class TrackRepository : ITrackRepository
     {
@@ -9,9 +9,12 @@
             _context = context;
         }
 
-        public async Task<List<Track>> GetTracksAsync() => 
+        public async Task<List<Track>> GetTracksAsync() =>
             await _context.Tracks.ToListAsync();
 
+        public async Task<List<Track>> GetPlaylistTracksAsync(Guid playlistId) => 
+            ((await _context.Playlists.FirstOrDefaultAsync(x => x.Id == playlistId))!).Tracks.ToList();
+        
         public async Task<Track> GetTrackAsync(Guid trackId) =>
             (await _context.Tracks.FindAsync(trackId))!;
 

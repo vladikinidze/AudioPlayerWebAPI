@@ -1,4 +1,4 @@
-﻿namespace AudioPlayerWebAPI.Models.Repositories
+﻿namespace AudioPlayerWebAPI.Repositories
 {
     public class UserRepository : IUserRepository
     {
@@ -11,7 +11,7 @@
         }
 
 
-        public async Task<User> AutenticateUserAsync(UserDto userDto) => 
+        public async Task<User> AutenticateUserAsync(UserDto userDto) =>
             (await _context.Users
                 .FirstOrDefaultAsync(x => x.Email == userDto.Email && x.Password == Hash.GetSha1Hash(userDto.Password)))!;
 

@@ -1,4 +1,4 @@
-﻿namespace AudioPlayerWebAPI.Models.Repositories
+﻿namespace AudioPlayerWebAPI.Repositories
 {
     public interface IUserRepository : IDisposable
     {
@@ -10,4 +10,3 @@
         Task SaveAsync();
     }
 }
-    
