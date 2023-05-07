@@ -1,8 +1,8 @@
 ﻿namespace AudioPlayerWebAPI.Validators
 {
-    public class PlaylistDtoValidator : AbstractValidator<Playlist>
+    public class PlaylistValidator : AbstractValidator<Playlist>
     {
-        public PlaylistDtoValidator()
+        public PlaylistValidator()
         {
             RuleFor(x => x.Title)
                 .NotEmpty()

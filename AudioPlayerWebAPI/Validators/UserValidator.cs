@@ -4,15 +4,17 @@
     {
         public UserValidator()
         {
+            RuleFor(x => x.Username)
+                .NotEmpty()
+                .WithMessage("Username is required.");
             RuleFor(x => x.Email)
                 .NotEmpty()
                 .WithMessage("Email is required.")
-                .EmailAddress()
-                .WithMessage("Invalid Email.");
+                .Matches(@"[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}")
+                .WithMessage("Email is not a valid email address.");
             RuleFor(x => x.Password)
                 .NotEmpty()
-                .WithMessage("Password is required.")
-                .MinimumLength(5);
+                .WithMessage("Password is required.");
         }
     }
 }

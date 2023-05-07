@@ -1,14 +1,18 @@
-﻿using AudioPlayerWebAPI.Repositories;
+﻿using AudioPlayerWebAPI.Models.DTO;
+using AudioPlayerWebAPI.Repositories;
+using FluentValidation;
 
 namespace AudioPlayerWebAPI.Apis
 {
     public class PlaylistApi : IApi
     {
         private readonly IPlaylistRepository _repository;
+        private readonly IValidator<Playlist> _validator;
 
-        public PlaylistApi(IPlaylistRepository repository)
+        public PlaylistApi(IPlaylistRepository repository, IValidator<Playlist> validator)
         {
             _repository = repository;
+            _validator = validator;
         }
 
         public void Register(WebApplication application)
@@ -20,24 +24,27 @@ namespace AudioPlayerWebAPI.Apis
                 .Produces<Playlist>(StatusCodes.Status200OK)
                 .Produces(StatusCodes.Status404NotFound);
 
-            application.MapGet("/playlists/{userId}", GetByUserId)
+            application.MapGet("/api/playlists/{userId}", GetByUserId)
                 .Produces<Playlist>(StatusCodes.Status200OK)
                 .Produces(StatusCodes.Status400BadRequest);
 
             application.MapPost("/api/playlists", Post)
                 .Accepts<Playlist>("application/json")
                 .Produces<Playlist>(StatusCodes.Status201Created)
-                .Produces(StatusCodes.Status400BadRequest);
+                .Produces(StatusCodes.Status400BadRequest)
+                .Produces(StatusCodes.Status403Forbidden);
 
             application.MapPut("/api/playlists", Put)
                 .Accepts<Playlist>("application/json")
                 .Produces(StatusCodes.Status200OK)
                 .Produces(StatusCodes.Status400BadRequest)
-                .Produces(StatusCodes.Status404NotFound);
+                .Produces(StatusCodes.Status404NotFound)
+                .Produces(StatusCodes.Status403Forbidden);
 
             application.MapDelete("/api/playlists/{id}", Delete)
                 .Produces(StatusCodes.Status200OK)
-                .Produces(StatusCodes.Status404NotFound);
+                .Produces(StatusCodes.Status404NotFound)
+                .Produces(StatusCodes.Status403Forbidden);
         }
 
         [AllowAnonymous]
@@ -51,28 +58,55 @@ namespace AudioPlayerWebAPI.Apis
                         : Results.NotFound();
 
         [Authorize]
-        private async Task<IResult> GetByUserId(Guid userId) =>
-            Results.Ok(await _repository.GetUserPlaylists(userId));
+        private async Task<IResult> GetByUserId(Guid userId)
+        {
+            var playlists = await _repository.GetUserPlaylists(userId);
+            if (playlists == null)
+            {
+                return Results.NotFound("Not found");
+            }
+            return Results.Ok(playlists);
+        }
+            
 
         [Authorize]
         private async Task<IResult> Post([FromBody] Playlist playlist)
         {
+            var validation = await _validator.ValidateAsync(playlist);
+            if (!validation.IsValid)
+            {
+                return Results.ValidationProblem(validation.ToDictionary());
+            }
             await _repository.InsertPlaylistAsync(playlist);
             await _repository.SaveAsync();
-            return Results.Created($"$Playlists/{playlist.Id}", playlist.Id);
+            return Results.Created($"$api/playlists/{playlist.Id}", playlist.Id);
         }
 
         [Authorize]
-        private async Task<IResult> Put([FromBody] Playlist Playlist)
+        private async Task<IResult> Put([FromBody] Playlist playlist, Guid userId)
         {
-            await _repository.UpdatePlaylistAsync(Playlist);
+            var validation = await _validator.ValidateAsync(playlist);
+            if (!validation.IsValid)
+            {
+                return Results.ValidationProblem(validation.ToDictionary());
+            }
+            if (playlist.UserId != userId)
+            {
+                return Results.Forbid();
+            }
+            await _repository.UpdatePlaylistAsync(playlist);
             await _repository.SaveAsync();
             return Results.Ok();
         }
 
         [Authorize]
-        private async Task<IResult> Delete(Guid playlistId)
+        private async Task<IResult> Delete(Guid playlistId, Guid userId)
         {
+            var playlist = await _repository.GetPlaylistAsync(playlistId);
+            if (playlist.UserId != userId || playlist == null)
+            {
+                return Results.Forbid();
+            }
             await _repository.DeletePlaylistAsync(playlistId);
             await _repository.SaveAsync();
             return Results.Ok();

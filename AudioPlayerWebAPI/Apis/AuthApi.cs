@@ -7,14 +7,12 @@ namespace AudioPlayerWebAPI.Apis
         private readonly IRefreshTokenRepository _refreshTokenRepository;
         private readonly ITokenService _tokenService;
         private readonly IConfiguration _configuration;
-        private readonly IMapper _mapper;
         private readonly IUserRepository _repository;
         private readonly IValidator<RegisterDto> _registerValidator;
         private readonly IValidator<LoginDto> _loginValidator;
 
         public AuthApi(
             IConfiguration configuration,
-            IMapper mapper,
             IUserRepository repository,
             IValidator<RegisterDto> registerValidator, 
             IValidator<LoginDto> loginValidator, 
@@ -22,7 +20,6 @@ namespace AudioPlayerWebAPI.Apis
             IRefreshTokenRepository refreshTokenRepository)
         {
             _configuration = configuration;
-            _mapper = mapper;
             _repository = repository;
             _registerValidator = registerValidator;
             _loginValidator = loginValidator;
@@ -72,7 +69,7 @@ namespace AudioPlayerWebAPI.Apis
             }
             var user = await _repository.RegisterateUserAsync(registerDto);
             await _repository.SaveAsync();
-            return Results.Created($"$users/{user.Id}", user.Id);
+            return Results.Created($"$api/users/{user.Id}", user.Id);
         }
 
         [AllowAnonymous]
