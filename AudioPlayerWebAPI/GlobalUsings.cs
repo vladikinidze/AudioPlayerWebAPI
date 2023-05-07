@@ -1,5 +1,5 @@
 global using AudioPlayerWebAPI.Models;
-global using AudioPlayerWebAPI.Models.Repositories;
+global using AudioPlayerWebAPI.Repositories;
 global using AudioPlayerWebAPI.Models.EntityTypeConfiguration;
 global using AudioPlayerWebAPI.Apis;
 global using AudioPlayerWebAPI.Apis.Interfaces;

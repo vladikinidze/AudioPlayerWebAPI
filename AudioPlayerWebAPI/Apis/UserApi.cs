@@ -1,16 +1,16 @@
-﻿using AudioPlayerWebAPI.Models.DTO;
-using Microsoft.AspNetCore.Builder;
-using static System.Net.Mime.MediaTypeNames;
-
-namespace AudioPlayerWebAPI.Apis
+﻿namespace AudioPlayerWebAPI.Apis
 {
     public class UserApi : IApi
     {
         private readonly IConfiguration _configuration;
+        private readonly IUserRepository _repository;
+        private readonly ITokenService _tokenService;
 
-        public UserApi(IConfiguration configuration)
+        public UserApi(IConfiguration configuration, IUserRepository repository, ITokenService tokenService)
         {
             _configuration = configuration;
+            _repository = repository;
+            _tokenService = tokenService;
         }
 
         public void Register(WebApplication application)
@@ -38,49 +38,47 @@ namespace AudioPlayerWebAPI.Apis
         }
 
         [AllowAnonymous]
-        private async Task<IResult> Autenticate(UserDto userDto,
-            ITokenService tokenService, IUserRepository repository)
+        private async Task<IResult> Autenticate(UserDto userDto)
         {
-            var user = await repository.AutenticateUserAsync(userDto);
+            var user = await _repository.AutenticateUserAsync(userDto);
             if (user == null)
             {
                 return Results.BadRequest("Invalid email or password");
             }
 
-            var token = tokenService.BuildToken(_configuration["Jwt:Key"]!,
+            var token = _tokenService.BuildToken(_configuration["Jwt:Key"]!,
                 _configuration["Jwt:Issuer"]!, user);
 
             return Results.Ok(token);
         }
 
         [AllowAnonymous]
-        private async Task<IResult> Registerate([FromBody] UserDto userDto,
-            ITokenService tokenService, IUserRepository repository)
+        private async Task<IResult> Registerate([FromBody] UserDto userDto)
         {
-            var user = await repository.InsertUserAsync(userDto);
-            await repository.SaveAsync();
+            var user = await _repository.InsertUserAsync(userDto);
+            await _repository.SaveAsync();
             return Results.Created($"$users/{user.Id}", user.Id);
         }
 
         [Authorize]
-        private async Task<IResult> GetById(Guid userId, IUserRepository repository) =>
-                    await repository.GetUserByIdAsync(userId) is User user
+        private async Task<IResult> GetById(Guid userId) =>
+                    await _repository.GetUserByIdAsync(userId) is User user
                         ? Results.Ok(user)
                         : Results.NotFound();
 
         [Authorize]
-        private async Task<IResult> Put([FromBody] User user, IUserRepository repository)
+        private async Task<IResult> Put([FromBody] User user)
         {
-            await repository.UpdateUserAsync(user);
-            await repository.SaveAsync();
+            await _repository.UpdateUserAsync(user);
+            await _repository.SaveAsync();
             return Results.Ok();
         }
 
         [Authorize]
-        private async Task<IResult> Delete(Guid userId, IUserRepository repository)
+        private async Task<IResult> Delete(Guid userId)
         {
-            await repository.DeleteUserAsync(userId);
-            await repository.SaveAsync();
+            await _repository.DeleteUserAsync(userId);
+            await _repository.SaveAsync();
             return Results.Ok();
         }
     }
