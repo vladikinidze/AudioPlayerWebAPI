@@ -12,7 +12,7 @@
             await _context.Playlists.ToListAsync();
 
         public async Task<List<Playlist>> GetUserPlaylists(Guid userId) => 
-            await _context.Playlists.Where(x => x.UserId == userId).ToListAsync();
+            ((await _context.Users.FirstOrDefaultAsync(x => x.Id == userId))!).Playlists.ToList();
 
         public async Task<Playlist> GetPlaylistAsync(Guid playlistId) =>
             (await _context.Playlists.FindAsync(playlistId))!;

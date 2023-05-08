@@ -6,10 +6,7 @@ namespace AudioPlayerWebAPI.Apis
     {
         private readonly IUserRepository _repository;
         private readonly IValidator<User> _validator;
-
-        public UserApi(
-            IUserRepository repository,
-            IValidator<User> validator)
+        public UserApi(IUserRepository repository, IValidator<User> validator)
         {
             _repository = repository;
             _validator = validator;

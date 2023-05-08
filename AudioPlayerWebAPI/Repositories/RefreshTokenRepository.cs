@@ -9,28 +9,19 @@
             _context = context;
         }
 
-        public async Task<UserRefreshToken> GetAsync(string token, string refreshToken) => 
-            (await _context.RefreshTokens.FirstOrDefaultAsync(t => 
+        public async Task<UserRefreshToken> GetAsync(string token, string refreshToken) =>
+            (await _context.RefreshTokens.FirstOrDefaultAsync(t =>
                 t.RefreshToken == refreshToken && t.AccessToken == token))!;
-   
 
-        public async Task SetRefreshTokenAsync(UserRefreshToken refreshToken)
+
+        public async Task<UserRefreshToken> SetRefreshTokenAsync(UserRefreshToken refreshToken)
         {
             var token = await _context.RefreshTokens.FirstOrDefaultAsync(x => x.UserId == refreshToken.UserId);
-            if (token == null)
+            if (token != null)
             {
-                await _context.RefreshTokens.AddAsync(refreshToken);
+                _context.RefreshTokens.Remove(token);
             }
-            else
-            {
-                token.AccessToken = refreshToken.AccessToken;
-                token.RefreshToken = refreshToken.RefreshToken;
-                token.UserId = refreshToken.UserId;
-                token.User = refreshToken.User;
-                token.Created = refreshToken.Created;
-                token.Expiration = refreshToken.Expiration;
-                _context.RefreshTokens.Update(token);
-            }
+            return _context.RefreshTokens.AddAsync(refreshToken).Result.Entity;
         }
 
         public async Task SaveAsync() => await _context.SaveChangesAsync();

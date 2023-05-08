@@ -7,7 +7,7 @@
             RuleFor(x => x.Title)
                 .NotEmpty()
                 .WithMessage("Title is required.");
-            RuleFor(x => x.UserId)
+            RuleFor(x => x.ParentUserId)
                 .NotEmpty();
         }
     }

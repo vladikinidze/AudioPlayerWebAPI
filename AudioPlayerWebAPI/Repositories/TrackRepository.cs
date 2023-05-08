@@ -26,7 +26,6 @@
             var trackFromDb = await _context.Tracks.FindAsync(track.Id);
             if (trackFromDb == null) return;
             trackFromDb.Title = track.Title;
-            trackFromDb.Image = track.Image;
             trackFromDb.Text = track.Text;
             trackFromDb.Audio = track.Audio;
             trackFromDb.Explicit = track.Explicit;

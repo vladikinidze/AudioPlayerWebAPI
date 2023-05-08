@@ -49,7 +49,7 @@ namespace AudioPlayerWebAPI
                                 Scheme = "Oauth2",
                                 Name = "Bearer",
                                 In = ParameterLocation.Header,
-                                
+
                             },
                             new string[]{}
                         }
@@ -108,9 +108,6 @@ namespace AudioPlayerWebAPI
                         options.RoutePrefix = string.Empty;
                     });
                     app.UseDeveloperExceptionPage();
-                    //using var scope = app.Services.CreateScope();
-                    //var db = scope.ServiceProvider.GetRequiredService<AudioPlayerDbContext>();
-                    //db.Database.EnsureCreated();
                 }
 
                 app.UseHttpsRedirection();
