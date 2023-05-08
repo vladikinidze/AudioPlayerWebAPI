@@ -1,6 +1,4 @@
-﻿using AudioPlayerWebAPI.Migrations;
-
-namespace AudioPlayerWebAPI.Apis
+﻿namespace AudioPlayerWebAPI.Apis
 {
     public class AuthApi : IApi
     {
@@ -55,7 +53,6 @@ namespace AudioPlayerWebAPI.Apis
             {
                 return Results.BadRequest("Invalid email or password");
             }
-
             return Results.Ok(await BuildTokens(user));
         }
 
@@ -102,7 +99,9 @@ namespace AudioPlayerWebAPI.Apis
                 _configuration["Jwt:Issuer"]!, user);
 
             var refreshToken = _tokenService.BuildRefreshToken(user, accessToken);
-            await _refreshTokenRepository.SetRefreshTokenAsync(refreshToken);
+            refreshToken = await _refreshTokenRepository.SetRefreshTokenAsync(refreshToken);
+            user.RefreshToken = refreshToken;
+            user.RefreshTokenId = refreshToken.Id;
             await _refreshTokenRepository.SaveAsync();
             return new AuthResponse { RefreshToken = refreshToken.RefreshToken, Token = accessToken };
         }

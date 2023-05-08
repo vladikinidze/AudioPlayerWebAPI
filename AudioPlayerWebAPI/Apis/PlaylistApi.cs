@@ -90,7 +90,7 @@ namespace AudioPlayerWebAPI.Apis
             {
                 return Results.ValidationProblem(validation.ToDictionary());
             }
-            if (playlist.UserId != userId)
+            if (playlist.ParentUserId != userId)
             {
                 return Results.Forbid();
             }
@@ -103,7 +103,7 @@ namespace AudioPlayerWebAPI.Apis
         private async Task<IResult> Delete(Guid playlistId, Guid userId)
         {
             var playlist = await _repository.GetPlaylistAsync(playlistId);
-            if (playlist.UserId != userId || playlist == null)
+            if (playlist.ParentUserId != userId || playlist == null)
             {
                 return Results.Forbid();
             }

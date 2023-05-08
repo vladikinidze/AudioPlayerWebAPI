@@ -34,20 +34,18 @@ namespace AudioPlayerWebAPI.Migrations
                     b.Property<string>("Image")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid>("ParentUserId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.HasKey("Id");
 
                     b.HasIndex("Id")
                         .IsUnique();
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("Playlist", (string)null);
                 });
@@ -65,10 +63,6 @@ namespace AudioPlayerWebAPI.Migrations
 
                     b.Property<bool>("Explicit")
                         .HasColumnType("bit");
-
-                    b.Property<string>("Image")
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
 
                     b.Property<Guid>("ParentPlaylistId")
                         .HasColumnType("uniqueidentifier");
@@ -149,7 +143,8 @@ namespace AudioPlayerWebAPI.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserId")
+                        .IsUnique();
 
                     b.ToTable("RefreshToken", (string)null);
                 });
@@ -169,22 +164,26 @@ namespace AudioPlayerWebAPI.Migrations
                     b.ToTable("PlaylistTrack");
                 });
 
-            modelBuilder.Entity("AudioPlayerWebAPI.Models.Playlist", b =>
+            modelBuilder.Entity("PlaylistUser", b =>
                 {
-                    b.HasOne("AudioPlayerWebAPI.Models.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Property<Guid>("PlaylistsId")
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Navigation("User");
+                    b.Property<Guid>("UsersId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("PlaylistsId", "UsersId");
+
+                    b.HasIndex("UsersId");
+
+                    b.ToTable("PlaylistUser");
                 });
 
             modelBuilder.Entity("AudioPlayerWebAPI.Models.UserRefreshToken", b =>
                 {
                     b.HasOne("AudioPlayerWebAPI.Models.User", "User")
-                        .WithMany("RefreshTokens")
-                        .HasForeignKey("UserId")
+                        .WithOne("RefreshToken")
+                        .HasForeignKey("AudioPlayerWebAPI.Models.UserRefreshToken", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -206,9 +205,25 @@ namespace AudioPlayerWebAPI.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("PlaylistUser", b =>
+                {
+                    b.HasOne("AudioPlayerWebAPI.Models.Playlist", null)
+                        .WithMany()
+                        .HasForeignKey("PlaylistsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("AudioPlayerWebAPI.Models.User", null)
+                        .WithMany()
+                        .HasForeignKey("UsersId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("AudioPlayerWebAPI.Models.User", b =>
                 {
-                    b.Navigation("RefreshTokens");
+                    b.Navigation("RefreshToken")
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

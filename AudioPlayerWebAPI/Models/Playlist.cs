@@ -5,9 +5,9 @@
         public Guid Id { get; set; }
         public string Title { get; set; } = string.Empty;
         public string? Image { get; set; }
-        public Guid UserId { get; set; }
-        public User User { get; set; } = null!;
+        public Guid ParentUserId { get; set; }
         public DateTime Created { get; set; }
+        public ICollection<User> Users { get; set; } = null!;
         public ICollection<Track> Tracks { get; set; } = null!;
     }
 }

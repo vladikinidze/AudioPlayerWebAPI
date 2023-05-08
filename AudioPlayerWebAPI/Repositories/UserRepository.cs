@@ -2,18 +2,16 @@
 {
     public class UserRepository : IUserRepository
     {
-
         private readonly AudioPlayerDbContext _context;
-
         public UserRepository(AudioPlayerDbContext context)
         {
             _context = context;
         }
 
-
         public async Task<User> AutenticateUserAsync(LoginDto userDto) =>
             (await _context.Users
-                .FirstOrDefaultAsync(x => x.Email == userDto.Email && x.Password == Hash.GetSha1Hash(userDto.Password)))!;
+                .FirstOrDefaultAsync(x => x.Email == userDto.Email 
+                && x.Password == Hash.GetSha1Hash(userDto.Password)))!;
 
         public async Task<User> GetUserByIdAsync(Guid userId) =>
             (await _context.Users.FindAsync(userId))!;

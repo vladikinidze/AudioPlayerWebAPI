@@ -12,6 +12,10 @@
          
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<User>()
+                .HasOne(u => u.RefreshToken)
+                .WithOne(rt => rt.User)
+                .HasForeignKey<UserRefreshToken>(rt => rt.UserId);
             modelBuilder.Entity<User>().ToTable("User");
             modelBuilder.Entity<Playlist>().ToTable("Playlist");
             modelBuilder.Entity<Track>().ToTable("Track");
