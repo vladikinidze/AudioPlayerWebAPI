@@ -7,8 +7,8 @@
         public string Email { get; set; } = string.Empty;
         public string? Image { get; set; } = string.Empty;
         public string Password { get; set; } = string.Empty;
-        public ICollection<Playlist> Playlists { get; set; } = null!;
+        public List<Playlist> Playlists { get; set; } = new();
         public Guid RefreshTokenId { get; set; }
-        public UserRefreshToken RefreshToken { get; set; } = null!;
+        public UserRefreshToken RefreshToken { get; set; }
     }
 }

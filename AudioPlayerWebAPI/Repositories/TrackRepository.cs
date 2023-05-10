@@ -13,7 +13,9 @@
             await _context.Tracks.ToListAsync();
 
         public async Task<List<Track>> GetPlaylistTracksAsync(Guid playlistId) => 
-            ((await _context.Playlists.FirstOrDefaultAsync(x => x.Id == playlistId))!).Tracks.ToList();
+            ((await _context.Playlists
+                .Include(x => x.Tracks)
+                .FirstOrDefaultAsync(x => x.Id == playlistId))!).Tracks.ToList();
         
         public async Task<Track> GetTrackAsync(Guid trackId) =>
             (await _context.Tracks.FindAsync(trackId))!;

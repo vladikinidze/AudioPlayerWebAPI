@@ -16,7 +16,8 @@
 
         public async Task<UserRefreshToken> SetRefreshTokenAsync(UserRefreshToken refreshToken)
         {
-            var token = await _context.RefreshTokens.FirstOrDefaultAsync(x => x.UserId == refreshToken.UserId);
+            var token = await _context.RefreshTokens
+                .FirstOrDefaultAsync(x => x.UserId == refreshToken.UserId);
             if (token != null)
             {
                 _context.RefreshTokens.Remove(token);

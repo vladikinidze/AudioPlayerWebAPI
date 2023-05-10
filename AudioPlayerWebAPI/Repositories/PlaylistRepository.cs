@@ -9,13 +9,22 @@
             _context = context;
         }
         public async Task<List<Playlist>> GetPlaylistsAsync() =>
-            await _context.Playlists.ToListAsync();
+            await _context.Playlists
+                .OrderByDescending(x => x.Created)
+                .ToListAsync();
 
-        public async Task<List<Playlist>> GetUserPlaylists(Guid userId) => 
-            ((await _context.Users.FirstOrDefaultAsync(x => x.Id == userId))!).Playlists.ToList();
+        public async Task<List<Playlist>> GetUserPlaylists(Guid userId)
+        {
+            var user = await _context.Users
+                .Include(x => x.Playlists)
+                .FirstOrDefaultAsync(x => x.Id == userId);
+            return user!.Playlists;
+        }
 
         public async Task<Playlist> GetPlaylistAsync(Guid playlistId) =>
-            (await _context.Playlists.FindAsync(playlistId))!;
+            (await _context.Playlists
+                .Include(x => x.Tracks)
+                .FirstOrDefaultAsync(x => x.Id == playlistId))!;
 
         public async Task InsertPlaylistAsync(Playlist playlist) =>
             await _context.Playlists.AddAsync(playlist);
