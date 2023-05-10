@@ -16,6 +16,17 @@
                 .HasOne(u => u.RefreshToken)
                 .WithOne(rt => rt.User)
                 .HasForeignKey<UserRefreshToken>(rt => rt.UserId);
+
+            modelBuilder.Entity<User>()
+                .HasMany(u => u.Playlists)
+                .WithMany(p => p.Users)
+                .UsingEntity(x => x.ToTable("UserPlaylists"));
+
+            modelBuilder.Entity<Playlist>()
+                .HasMany(p => p.Tracks)
+                .WithMany(t => t.Playlists)
+                .UsingEntity(x => x.ToTable("PlaylistTracks"));
+
             modelBuilder.Entity<User>().ToTable("User");
             modelBuilder.Entity<Playlist>().ToTable("Playlist");
             modelBuilder.Entity<Track>().ToTable("Track");

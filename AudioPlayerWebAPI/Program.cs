@@ -51,10 +51,11 @@ namespace AudioPlayerWebAPI
                                 In = ParameterLocation.Header,
 
                             },
-                            new string[]{}
+                            Array.Empty<string>()
                         }
                     });
                 });
+                builder.Services.AddCors();
                 services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
                 services.AddDbContext<AudioPlayerDbContext>(options =>
                 {
@@ -87,18 +88,18 @@ namespace AudioPlayerWebAPI
                         };
                     });
 
-                builder.Services.AddTransient<IApi, TrackApi>();
-                builder.Services.AddTransient<IApi, PlaylistApi>();
-                builder.Services.AddTransient<IApi, FileApi>();
-                builder.Services.AddTransient<IApi, UserApi>();
-                builder.Services.AddTransient<IApi, AuthApi>();
+                services.AddTransient<IApi, TrackApi>();
+                services.AddTransient<IApi, PlaylistApi>();
+                services.AddTransient<IApi, FileApi>();
+                services.AddTransient<IApi, UserApi>();
+                services.AddTransient<IApi, AuthApi>();
             }
 
             void Configure(WebApplication app)
             {
                 app.UseAuthentication();
                 app.UseAuthorization();
-
+                app.UseCors(corsPolicyBuilder => corsPolicyBuilder.AllowAnyOrigin());
                 if (app.Environment.IsDevelopment())
                 {
                     app.UseSwagger();
@@ -108,6 +109,9 @@ namespace AudioPlayerWebAPI
                         options.RoutePrefix = string.Empty;
                     });
                     app.UseDeveloperExceptionPage();
+                    //using var scope = app.Services.CreateScope();
+                    //var db = scope.ServiceProvider.GetRequiredService<AudioPlayerDbContext>();
+                    //db.Database.EnsureCreated();
                 }
 
                 app.UseHttpsRedirection();

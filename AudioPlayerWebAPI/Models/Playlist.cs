@@ -7,7 +7,7 @@
         public string? Image { get; set; }
         public Guid ParentUserId { get; set; }
         public DateTime Created { get; set; }
-        public ICollection<User> Users { get; set; } = null!;
-        public ICollection<Track> Tracks { get; set; } = null!;
+        public List<User> Users { get; set; } = new();
+        public List<Track> Tracks { get; set; } = new();
     }
 }

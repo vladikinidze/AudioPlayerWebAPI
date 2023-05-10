@@ -7,13 +7,42 @@ namespace AudioPlayerWebAPI.Apis
             application.MapPost("/api/upload", Post)
                 .Produces<string>(StatusCodes.Status200OK)
                 .Produces(StatusCodes.Status400BadRequest)
+                .Produces(StatusCodes.Status401Unauthorized)
+                .Produces(StatusCodes.Status500InternalServerError);
+
+            application.MapGet("/api/files/{filename}", GetByName)
+                .Produces<FileStreamResult>(StatusCodes.Status200OK)
                 .Produces(StatusCodes.Status500InternalServerError);
 
             application.MapGet("/api/download", Get)
                 .Produces<string>(StatusCodes.Status200OK)
+                .Produces(StatusCodes.Status401Unauthorized)
                 .Produces(StatusCodes.Status400BadRequest);
         }
 
+        [AllowAnonymous]
+        private IResult GetByName(string filename)
+        {
+            var contentType = "image/jpeg";
+            var folder = "Image";
+            if (filename.Contains(".mp3"))
+            {
+                contentType = "audio/mpeg";
+                folder = "Audio";
+            }
+
+            try
+            {
+                var file = File.OpenRead(Directory.GetCurrentDirectory() + "\\Upload\\Files\\Static\\" + folder + "\\" + filename);
+                return Results.File(file, contentType);
+            }
+            catch (Exception )
+            {
+                return Results.Empty;
+            }
+            
+            
+        }
 
         [Authorize]
         private async Task<IResult> Post(IFormFile file)
@@ -22,7 +51,8 @@ namespace AudioPlayerWebAPI.Apis
             {
                 string filename = "";
                 var extension = "." + file.FileName.Split('.').Last();
-                if (extension != ".jpg" && extension != ".png" && extension != ".jpeg" && extension != ".mp3") {
+                if (extension != ".jpg" && extension != ".png" && extension != ".jpeg" && extension != ".mp3")
+                {
                     return Results.BadRequest("Only .mp3, .jpg, .png files");
                 }
                 filename = Guid.NewGuid() + extension;
@@ -40,10 +70,9 @@ namespace AudioPlayerWebAPI.Apis
             }
             catch (Exception)
             {
-                return Results.Problem(statusCode: StatusCodes.Status500InternalServerError);
+                return Results.Problem(statusCode: StatusCodes.Status500InternalServerError, detail: "Something wrong");
             }
         }
-
 
         [Authorize]
         private async Task<IResult> Get(string filename)

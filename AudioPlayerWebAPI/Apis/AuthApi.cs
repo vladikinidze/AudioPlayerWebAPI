@@ -65,6 +65,10 @@
                 return Results.ValidationProblem(validation.ToDictionary());
             }
             var user = await _repository.RegisterateUserAsync(registerDto);
+            if (user == null)
+            {
+                return Results.BadRequest("This Email already in use");
+            }
             await _repository.SaveAsync();
             return Results.Created($"$api/users/{user.Id}", user.Id);
         }

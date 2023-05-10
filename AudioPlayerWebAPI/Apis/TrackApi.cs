@@ -9,12 +9,15 @@ namespace AudioPlayerWebAPI.Apis
     public class TrackApi : IApi
     {
         private readonly ITrackRepository _repository;
+        private readonly IPlaylistRepository _playlistRepository;
         private readonly IValidator<TrackDto> _validator;
         private readonly IMapper _mapper;
 
-        public TrackApi(ITrackRepository repository, IValidator<TrackDto> validator, IMapper mapper)
+        public TrackApi(ITrackRepository repository, IPlaylistRepository playlistRepository,
+            IValidator<TrackDto> validator, IMapper mapper)
         {
             _repository = repository;
+            _playlistRepository = playlistRepository;
             _validator = validator;
             _mapper = mapper;
         }
@@ -22,15 +25,18 @@ namespace AudioPlayerWebAPI.Apis
         public void Register(WebApplication application)
         {
             application.MapGet("/api/tracks", Get)
-                .Produces<List<Track>>(StatusCodes.Status200OK);
+                .Produces<List<TrackDto>>(StatusCodes.Status200OK);
 
-            application.MapGet("/api/tracks/{id}", GetById)
-                .Produces<Track>(StatusCodes.Status200OK)
+            application.MapGet("/api/tracks/{trackId}", GetById)
+                .Produces<TrackDto>(StatusCodes.Status200OK)
+                .Produces(StatusCodes.Status404NotFound);
+            application.MapGet("/api/tracks/playlists/{playlistId}", GetByPlaylistId)
+                .Produces<List<TrackDto>>(StatusCodes.Status200OK)
                 .Produces(StatusCodes.Status404NotFound);
 
             application.MapPost("/api/tracks", Post)
-                .Accepts<Track>("application/json")
-                .Produces<Track>(StatusCodes.Status201Created)
+                .Accepts<TrackDto>("application/json")
+                .Produces<TrackDto>(StatusCodes.Status201Created)
                 .Produces(StatusCodes.Status400BadRequest);
             
             application.MapPut("/api/tracks", Put)
@@ -39,7 +45,7 @@ namespace AudioPlayerWebAPI.Apis
                 .Produces(StatusCodes.Status400BadRequest)
                 .Produces(StatusCodes.Status404NotFound);
 
-            application.MapDelete("/api/tracks/{id}", Delete)
+            application.MapDelete("/api/tracks/{trackId}", Delete)
                 .Produces(StatusCodes.Status200OK)
                 .Produces(StatusCodes.Status404NotFound);
         }
@@ -51,8 +57,16 @@ namespace AudioPlayerWebAPI.Apis
         [AllowAnonymous]
         private async Task<IResult> GetById(Guid trackId) =>
             await _repository.GetTrackAsync(trackId) is Track track
-                ? Results.Ok(track)
+                ? Results.Ok(_mapper.Map<TrackDto>(track))
                 : Results.NotFound();
+
+        [AllowAnonymous]
+        private async Task<IResult> GetByPlaylistId(Guid playlistId)
+        {
+            var tracks = _mapper.Map<List<TrackDto>>(await _repository.GetPlaylistTracksAsync(playlistId));
+            return Results.Ok(tracks);
+        }
+         
 
         [Authorize]
         private async Task<IResult> Post([FromBody] TrackDto trackDto)
@@ -62,9 +76,20 @@ namespace AudioPlayerWebAPI.Apis
             {
                 return Results.ValidationProblem(validation.ToDictionary());
             }
-            await _repository.InsertTrackAsync(_mapper.Map<Track>(trackDto));
+            var track = _mapper.Map<Track>(trackDto);
+            var playlist = await _playlistRepository.GetPlaylistAsync(track.ParentPlaylistId);
+            if (playlist == null)
+            {
+                return Results.BadRequest("Playlist not found");
+            }
+            track.Id = Guid.NewGuid();
+            track.Playlists.Add(playlist);
+            playlist.Tracks.Add(track);
+            await _playlistRepository.UpdatePlaylistAsync(playlist);
+            await _repository.InsertTrackAsync(track);
             await _repository.SaveAsync();
-            return Results.Created($"$api/tracks/{trackDto.Id}", trackDto.Id);
+            await _playlistRepository.SaveAsync();
+            return Results.Created($"$api/tracks/{track.Id}", track.Id);
         }
 
         [Authorize]

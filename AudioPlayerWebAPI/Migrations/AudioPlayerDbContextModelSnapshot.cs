@@ -161,7 +161,7 @@ namespace AudioPlayerWebAPI.Migrations
 
                     b.HasIndex("TracksId");
 
-                    b.ToTable("PlaylistTrack");
+                    b.ToTable("PlaylistTracks", (string)null);
                 });
 
             modelBuilder.Entity("PlaylistUser", b =>
@@ -176,7 +176,7 @@ namespace AudioPlayerWebAPI.Migrations
 
                     b.HasIndex("UsersId");
 
-                    b.ToTable("PlaylistUser");
+                    b.ToTable("UserPlaylists", (string)null);
                 });
 
             modelBuilder.Entity("AudioPlayerWebAPI.Models.UserRefreshToken", b =>

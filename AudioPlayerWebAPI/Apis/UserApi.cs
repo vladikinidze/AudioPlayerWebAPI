@@ -14,7 +14,7 @@ namespace AudioPlayerWebAPI.Apis
 
         public void Register(WebApplication application)
         {
-            application.MapGet("/api/users/{id}", GetById)
+            application.MapGet("/api/users/{userId}", GetById)
                 .Produces<User>(StatusCodes.Status200OK)
                 .Produces(StatusCodes.Status404NotFound);
 
@@ -23,7 +23,7 @@ namespace AudioPlayerWebAPI.Apis
                 .Produces(StatusCodes.Status200OK)
                 .Produces(StatusCodes.Status400BadRequest);
 
-            application.MapDelete("/api/users/{id}", Delete)
+            application.MapDelete("/api/users/{userId}", Delete)
                 .Produces(StatusCodes.Status200OK)
                 .Produces(StatusCodes.Status404NotFound);
         }
