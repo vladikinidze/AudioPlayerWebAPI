@@ -8,15 +8,15 @@ namespace AudioPlayerWebAPI.Apis
 {
     public class TrackApi : IApi
     {
-        private readonly ITrackRepository _repository;
+        private readonly ITrackRepository _trackRepository;
         private readonly IPlaylistRepository _playlistRepository;
         private readonly IValidator<TrackDto> _validator;
         private readonly IMapper _mapper;
 
-        public TrackApi(ITrackRepository repository, IPlaylistRepository playlistRepository,
+        public TrackApi(ITrackRepository trackRepository, IPlaylistRepository playlistRepository,
             IValidator<TrackDto> validator, IMapper mapper)
         {
-            _repository = repository;
+            _trackRepository = trackRepository;
             _playlistRepository = playlistRepository;
             _validator = validator;
             _mapper = mapper;
@@ -52,18 +52,18 @@ namespace AudioPlayerWebAPI.Apis
 
         [AllowAnonymous]
         private async Task<IResult> Get() =>
-            Results.Ok(await _repository.GetTracksAsync());
+            Results.Ok(_mapper.Map<List<TrackDto>>(await _trackRepository.GetTracksAsync()));
 
         [AllowAnonymous]
         private async Task<IResult> GetById(Guid trackId) =>
-            await _repository.GetTrackAsync(trackId) is Track track
+            await _trackRepository.GetTrackAsync(trackId) is Track track
                 ? Results.Ok(_mapper.Map<TrackDto>(track))
                 : Results.NotFound();
 
         [AllowAnonymous]
         private async Task<IResult> GetByPlaylistId(Guid playlistId)
         {
-            var tracks = _mapper.Map<List<TrackDto>>(await _repository.GetPlaylistTracksAsync(playlistId));
+            var tracks = _mapper.Map<List<TrackDto>>(await _trackRepository.GetPlaylistTracksAsync(playlistId));
             return Results.Ok(tracks);
         }
          
@@ -85,10 +85,8 @@ namespace AudioPlayerWebAPI.Apis
             track.Id = Guid.NewGuid();
             track.Playlists.Add(playlist);
             playlist.Tracks.Add(track);
-            await _playlistRepository.UpdatePlaylistAsync(playlist);
-            await _repository.InsertTrackAsync(track);
-            await _repository.SaveAsync();
-            await _playlistRepository.SaveAsync();
+            await _trackRepository.InsertTrackAsync(track);
+            await _trackRepository.SaveAsync();
             return Results.Created($"$api/tracks/{track.Id}", track.Id);
         }
 
@@ -100,16 +98,29 @@ namespace AudioPlayerWebAPI.Apis
             {
                 return Results.ValidationProblem(validation.ToDictionary());
             }
-            await _repository.UpdateTrackAsync(_mapper.Map<Track>(trackDto));
-            await _repository.SaveAsync();
+            var isSuccess = await _trackRepository.UpdateTrackAsync(_mapper.Map<Track>(trackDto));
+            if (!isSuccess)
+            {
+                return Results.NotFound();
+            }
+            await _trackRepository.SaveAsync();
             return Results.Ok();
         }
 
         [Authorize]
-        private async Task<IResult> Delete(Guid trackId)
+        private async Task<IResult> Delete(Guid trackId, Guid playlistId)
         {
-            await _repository.DeleteTrackAsync(trackId);
-            await _repository.SaveAsync();
+            var track = await _trackRepository.GetTrackAsync(trackId);
+            if (track.ParentPlaylistId != playlistId)
+            {
+                Results.Forbid();
+            }
+            var isSuccess = await _trackRepository.DeleteTrackAsync(trackId);
+            if (!isSuccess)
+            {
+                return Results.NotFound();
+            }
+            await _trackRepository.SaveAsync();
             return Results.Ok();
         }
     }

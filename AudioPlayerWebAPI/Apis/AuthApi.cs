@@ -5,20 +5,20 @@
         private readonly IRefreshTokenRepository _refreshTokenRepository;
         private readonly ITokenService _tokenService;
         private readonly IConfiguration _configuration;
-        private readonly IUserRepository _repository;
+        private readonly IUserRepository _userRepository;
         private readonly IValidator<RegisterDto> _registerValidator;
         private readonly IValidator<LoginDto> _loginValidator;
 
         public AuthApi(
             IConfiguration configuration,
-            IUserRepository repository,
+            IUserRepository userRepository,
             IValidator<RegisterDto> registerValidator, 
             IValidator<LoginDto> loginValidator, 
             ITokenService tokenService, 
             IRefreshTokenRepository refreshTokenRepository)
         {
             _configuration = configuration;
-            _repository = repository;
+            _userRepository = userRepository;
             _registerValidator = registerValidator;
             _loginValidator = loginValidator;
             _tokenService = tokenService;
@@ -48,7 +48,7 @@
             {
                 return Results.ValidationProblem(validation.ToDictionary());
             }
-            var user = await _repository.AutenticateUserAsync(loginDto);
+            var user = await _userRepository.AutenticateUserAsync(loginDto);
             if (user == null)
             {
                 return Results.BadRequest("Invalid email or password");
@@ -64,12 +64,12 @@
             {
                 return Results.ValidationProblem(validation.ToDictionary());
             }
-            var user = await _repository.RegisterateUserAsync(registerDto);
+            var user = await _userRepository.RegisterateUserAsync(registerDto);
             if (user == null)
             {
                 return Results.BadRequest("This Email already in use");
             }
-            await _repository.SaveAsync();
+            await _userRepository.SaveAsync();
             return Results.Created($"$api/users/{user.Id}", user.Id);
         }
 
@@ -93,7 +93,7 @@
             }
 
             var userId = token.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)!.Value;
-            var user = await _repository.GetUserByIdAsync(new Guid(userId));
+            var user = await _userRepository.GetUserByIdAsync(new Guid(userId));
             return Results.Ok(await BuildTokens(user));
         }
 

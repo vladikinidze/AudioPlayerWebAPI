@@ -15,7 +15,7 @@
         public async Task<List<Track>> GetPlaylistTracksAsync(Guid playlistId) => 
             ((await _context.Playlists
                 .Include(x => x.Tracks)
-                .FirstOrDefaultAsync(x => x.Id == playlistId))!).Tracks.ToList();
+                .FirstOrDefaultAsync(x => x.Id == playlistId))!).Tracks.OrderBy(x => x.Created).ToList();
         
         public async Task<Track> GetTrackAsync(Guid trackId) =>
             (await _context.Tracks.FindAsync(trackId))!;
@@ -23,22 +23,24 @@
         public async Task InsertTrackAsync(Track track) =>
             await _context.Tracks.AddAsync(track);
 
-        public async Task UpdateTrackAsync(Track track)
+        public async Task<bool> UpdateTrackAsync(Track track)
         {
             var trackFromDb = await _context.Tracks.FindAsync(track.Id);
-            if (trackFromDb == null) return;
+            if (trackFromDb == null) return false;
             trackFromDb.Title = track.Title;
             trackFromDb.Text = track.Text;
             trackFromDb.Audio = track.Audio;
             trackFromDb.Explicit = track.Explicit;
             trackFromDb.Playlists = track.Playlists;
+            return true;
         }
 
-        public async Task DeleteTrackAsync(Guid trackId)
+        public async Task<bool> DeleteTrackAsync(Guid trackId)
         {
             var trackFromDb = await _context.Tracks.FindAsync(trackId);
-            if (trackFromDb == null) return;
+            if (trackFromDb == null) return false;
             _context.Tracks.Remove(trackFromDb);
+            return true;
         }
 
         public async Task SaveAsync() => await _context.SaveChangesAsync();

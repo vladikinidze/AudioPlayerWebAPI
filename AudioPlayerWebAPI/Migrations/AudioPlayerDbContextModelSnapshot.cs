@@ -61,6 +61,9 @@ namespace AudioPlayerWebAPI.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
                     b.Property<bool>("Explicit")
                         .HasColumnType("bit");
 

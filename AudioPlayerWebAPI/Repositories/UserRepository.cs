@@ -32,21 +32,23 @@
             return user;
         }
 
-        public async Task UpdateUserAsync(User user)
+        public async Task<bool> UpdateUserAsync(User user)
         {
             var userFromDb = await _context.Users.FindAsync(user.Id);
-            if (userFromDb == null) return;
+            if (userFromDb == null) return false;
             userFromDb.Username = user.Username;
             userFromDb.Image = user.Image;
             userFromDb.Email = user.Email;
             userFromDb.Password = user.Password;
+            return true;
         }
 
-        public async Task DeleteUserAsync(Guid userId)
+        public async Task<bool> DeleteUserAsync(Guid userId)
         {
             var userFromDb = await _context.Users.FindAsync(userId);
-            if (userFromDb == null) return;
+            if (userFromDb == null) return false;
             _context.Users.Remove(userFromDb);
+            return true;
         }
 
         public async Task SaveAsync() => await _context.SaveChangesAsync();
