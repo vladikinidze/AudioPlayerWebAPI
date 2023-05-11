@@ -2,19 +2,19 @@
 {
     public class PlaylistApi : IApi
     {
-        private readonly IPlaylistRepository _repository;
+        private readonly IPlaylistRepository _playlistRepository;
         private readonly IUserRepository _userRepository;
         private readonly ITrackRepository _trackRepository;
         private readonly IValidator<Playlist> _validator;
         private readonly IMapper _mapper;
 
         public PlaylistApi(
-            IPlaylistRepository repository, 
+            IPlaylistRepository playlistRepository, 
             IUserRepository userRepository, 
             ITrackRepository trackRepository,
             IValidator<Playlist> validator, IMapper mapper)
         {
-            _repository = repository;
+            _playlistRepository = playlistRepository;
             _userRepository = userRepository;
             _trackRepository = trackRepository;
             _validator = validator;
@@ -57,7 +57,7 @@
         [AllowAnonymous]
         private async Task<IResult> Get(IPlaylistRepository repository)
         {
-            var data = _mapper.Map<List<PlaylistDto>>(await _repository.GetPlaylistsAsync());
+            var data = _mapper.Map<List<PlaylistDto>>(await _playlistRepository.GetPlaylistsAsync());
             data.ForEach(x => x.User = _mapper.Map<UserDto>(_userRepository.GetUserByIdAsync(x.ParentUserId).Result));
             return Results.Ok(data);
         }
@@ -65,7 +65,7 @@
         [AllowAnonymous]
         private async Task<IResult> GetById(Guid playlistId)
         {
-            var playlist = _mapper.Map<PlaylistDto>(await _repository.GetPlaylistAsync(playlistId));
+            var playlist = _mapper.Map<PlaylistDto>(await _playlistRepository.GetPlaylistAsync(playlistId));
             if (playlist == null)
             {
                 return Results.NotFound();
@@ -77,7 +77,7 @@
         [Authorize]
         private async Task<IResult> GetByUserId(Guid userId)
         {
-            var playlists = _mapper.Map<List<PlaylistDto>>(await _repository.GetUserPlaylists(userId));
+            var playlists = _mapper.Map<List<PlaylistDto>>(await _playlistRepository.GetUserPlaylists(userId));
             if (playlists == null)
             {
                 return Results.NotFound("Not found");
@@ -107,38 +107,51 @@
             }
             playlist.Users.Add(user);
             user.Playlists.Add(playlist);
-            await _repository.InsertPlaylistAsync(playlist);
-            await _repository.SaveAsync();
+            await _playlistRepository.InsertPlaylistAsync(playlist);
+            await _playlistRepository.SaveAsync();
             return Results.Created($"$api/playlists/{playlist.Id}", playlist.Id);
         }
 
         [Authorize]
-        private async Task<IResult> Put([FromBody] Playlist playlist, Guid userId)
+        private async Task<IResult> Put([FromBody] PlaylistDto playlistDto, Guid userId)
         {
+            var playlist = _mapper.Map<Playlist>(playlistDto);
+            if (playlist.ParentUserId != userId)
+            {
+                return Results.Forbid();
+            }
             var validation = await _validator.ValidateAsync(playlist);
             if (!validation.IsValid)
             {
                 return Results.ValidationProblem(validation.ToDictionary());
             }
-            if (playlist.ParentUserId != userId)
+            var isSuccess = await _playlistRepository.UpdatePlaylistAsync(playlist);
+            if (!isSuccess)
             {
-                return Results.Forbid();
+                return Results.NotFound();
             }
-            await _repository.UpdatePlaylistAsync(playlist);
-            await _repository.SaveAsync();
+            await _playlistRepository.SaveAsync();
             return Results.Ok();
         }
 
         [Authorize]
         private async Task<IResult> Delete(Guid playlistId, Guid userId)
         {
-            var playlist = await _repository.GetPlaylistAsync(playlistId);
-            if (playlist.ParentUserId != userId || playlist == null)
+            var playlist = await _playlistRepository.GetPlaylistAsync(playlistId);
+            if (playlist.ParentUserId != userId)
             {
                 return Results.Forbid();
             }
-            await _repository.DeletePlaylistAsync(playlistId);
-            await _repository.SaveAsync();
+            playlist.Tracks.ForEach(x =>
+            {
+                _trackRepository.DeleteTrackAsync(x.Id);
+            });
+            var isSuccess = await _playlistRepository.DeletePlaylistAsync(playlistId);
+            if (!isSuccess)
+            {
+                return Results.NotFound();
+            }
+            await _playlistRepository.SaveAsync();
             return Results.Ok();
         }
     }

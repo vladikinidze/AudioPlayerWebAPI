@@ -6,8 +6,8 @@
         Task<List<Track>> GetPlaylistTracksAsync(Guid playlistId);
         Task<Track> GetTrackAsync(Guid trackId);
         Task InsertTrackAsync(Track track);
-        Task UpdateTrackAsync(Track track);
-        Task DeleteTrackAsync(Guid trackId);
+        Task<bool> UpdateTrackAsync(Track track);
+        Task<bool> DeleteTrackAsync(Guid trackId);
         Task SaveAsync();
     }
 }

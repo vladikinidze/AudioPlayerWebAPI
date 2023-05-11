@@ -6,8 +6,8 @@
         Task<List<Playlist>> GetUserPlaylists(Guid userId);
         Task<Playlist> GetPlaylistAsync(Guid playlistId);
         Task InsertPlaylistAsync(Playlist playlist);
-        Task UpdatePlaylistAsync(Playlist playlist);
-        Task DeletePlaylistAsync(Guid playlistId);
+        Task<bool> UpdatePlaylistAsync(Playlist playlist);
+        Task<bool> DeletePlaylistAsync(Guid playlistId);
         Task SaveAsync();
     }
 }

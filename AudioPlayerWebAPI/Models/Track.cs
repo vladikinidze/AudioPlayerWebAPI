@@ -7,6 +7,7 @@
         public string? Text { get; set; }
         public string Audio { get; set; } = string.Empty;
         public bool Explicit { get; set; }
+        public DateTime Created { get; set; }
         public Guid ParentPlaylistId { get; set; }
         public List<Playlist> Playlists { get; set; } = new();
     }

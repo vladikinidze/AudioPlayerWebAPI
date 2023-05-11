@@ -29,20 +29,22 @@
         public async Task InsertPlaylistAsync(Playlist playlist) =>
             await _context.Playlists.AddAsync(playlist);
 
-        public async Task UpdatePlaylistAsync(Playlist playlist)
+        public async Task<bool> UpdatePlaylistAsync(Playlist playlist)
         {
             var playlistFromDb = await _context.Playlists.FindAsync(playlist.Id);
-            if (playlistFromDb == null) return;
+            if (playlistFromDb == null) return false;
             playlistFromDb.Title = playlist.Title;
             playlistFromDb.Image = playlist.Image;
             playlistFromDb.Tracks = playlist.Tracks;
+            return true;
         }
 
-        public async Task DeletePlaylistAsync(Guid playlistId)
+        public async Task<bool> DeletePlaylistAsync(Guid playlistId)
         {
-            var playlistFromDb = await _context.Playlists.FindAsync(playlistId);
-            if (playlistFromDb == null) return;
+            var playlistFromDb = await _context.Playlists.FirstOrDefaultAsync(x => x.Id == playlistId);
+            if (playlistFromDb == null) return false;
             _context.Playlists.Remove(playlistFromDb);
+            return true;
         }
 
         public async Task SaveAsync() => await _context.SaveChangesAsync();
