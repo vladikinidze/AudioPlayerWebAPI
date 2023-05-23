@@ -1,4 +1,9 @@
-﻿using System.Globalization;
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Security.Cryptography;
+using System.Text;
+using AudioPlayerWebAPI.Entities;
+using Microsoft.IdentityModel.Tokens;
 
 namespace AudioPlayerWebAPI.Services.TokenService
 {
@@ -23,13 +28,13 @@ namespace AudioPlayerWebAPI.Services.TokenService
     
 }
 
-        public UserRefreshToken BuildRefreshToken(User user, string accessToken)
+        public RefreshToken BuildRefreshToken(User user, string accessToken)
         {
-            return new UserRefreshToken
+            return new RefreshToken
             {
                 Id = Guid.NewGuid(),
                 AccessToken = accessToken,
-                RefreshToken = Convert.ToBase64String(RandomNumberGenerator.GetBytes(64)),
+                RefToken = Convert.ToBase64String(RandomNumberGenerator.GetBytes(64)),
                 Created = DateTime.Now,
                 Expiration = DateTime.Now.AddDays(15),
                 UserId = user.Id,
