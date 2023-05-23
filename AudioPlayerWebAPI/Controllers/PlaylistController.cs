@@ -56,7 +56,7 @@ namespace AudioPlayerWebAPI.Controllers
         /// <param name="userId">User Id (guid)</param>
         /// <returns>Return PlaylistListVm</returns>
         /// <response code="200">Success</response>
-        /// <response code="404">Success</response>
+        /// <response code="404">NotFound</response>
         [HttpGet("{userId}")]
         [AllowAnonymous]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -114,6 +114,7 @@ namespace AudioPlayerWebAPI.Controllers
         /// <param name="updatePlaylistDto">CreatePlaylistDto object</param>
         /// <response code="200">Success</response>
         /// <response code="400">Bad request</response>
+        /// <response code="404">Not found</response>
         /// <response code="401">Unauthorized</response>
         [HttpPut]
         [Authorize]
@@ -135,6 +136,7 @@ namespace AudioPlayerWebAPI.Controllers
         /// </summary>
         /// <param name="id">Playlst id (guid)</param>
         /// <response code="200">Success</response>
+        /// <response code="404">Not found</response>
         /// <response code="401">Unauthorized</response>
         [HttpDelete("{id}")]
         [Authorize]

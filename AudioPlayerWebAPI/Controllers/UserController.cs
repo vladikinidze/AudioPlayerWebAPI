@@ -6,6 +6,7 @@ using AudioPlayerWebAPI.UseCase.Users.Commands.Login;
 using AudioPlayerWebAPI.UseCase.Users.Commands.RefreshTokenCommand;
 using AudioPlayerWebAPI.UseCase.Users.Commands.Register;
 using AudioPlayerWebAPI.UseCase.Users.Commands.UpdateAccount;
+using AudioPlayerWebAPI.UseCase.Users.Queries;
 using AudioPlayerWebAPI.UseCase.ViewModels;
 using AutoMapper;
 using MediatR;
@@ -25,7 +26,8 @@ namespace AudioPlayerWebAPI.Controllers
         private readonly IFileService _fileService;
         private readonly IUserTokenService _tokenService;
 
-        public UserController(IMapper mapper, IMediator mediator, IFileService fileService, IUserTokenService tokenService)
+        public UserController(IMapper mapper, IMediator mediator, 
+            IFileService fileService, IUserTokenService tokenService)
         {
             _mapper = mapper;
             _mediator = mediator;
@@ -34,12 +36,27 @@ namespace AudioPlayerWebAPI.Controllers
         }
 
         /// <summary>
+        /// Get user bu Id
+        /// </summary>
+        /// <param name="userId">User id (guid)</param>
+        /// <response code="200">Success</response>
+        /// <response code="404">Not found</response>
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<ActionResult<UserViewModel>> GetById(Guid userId)
+        {
+            var command = new GetUserQuery { Id = userId };
+            var vm = await _mediator.Send(command);
+            return Ok(vm);
+        }
+
+        /// <summary>
         /// Authentication
         /// </summary>
         /// <param name="loginDto">LoginDto object</param>
         /// <response code="200">Success</response>
+        /// <response code="400">Not found</response>
         /// <response code="404">Bad request</response>
-        /// <response code="401">Unauthorized</response>
         [HttpPost("Login")]
         [AllowAnonymous]
         public async Task<ActionResult<AuthViewModel>> AuthenticateUser([FromBody] LoginDto loginDto)
@@ -54,8 +71,8 @@ namespace AudioPlayerWebAPI.Controllers
         /// </summary>
         /// <param name="registerDto">RegisterDto object</param>
         /// <response code="200">Success</response>
+        /// <response code="400">Not found</response>
         /// <response code="404">Bad request</response>
-        /// <response code="401">Unauthorized</response>
         [HttpPost("Register")]
         [AllowAnonymous]
         public async Task<IActionResult> RegisterUser([FromBody] RegisterDto registerDto)
@@ -70,8 +87,8 @@ namespace AudioPlayerWebAPI.Controllers
         /// </summary>
         /// <param name="refreshTokenDto">RefreshTokenDto object</param>
         /// <response code="200">Success</response>
-        /// <response code="404">Bad request</response>
-        /// <response code="401">Unauthorized</response>
+        /// <response code="404">Not found</response>
+        /// <response code="400">Bad request</response>
         [HttpPost("RefreshToken")]
         [AllowAnonymous]
         public async Task<ActionResult<AuthViewModel>> RefreshToken([FromBody]RefreshTokenDto refreshTokenDto)
@@ -86,7 +103,8 @@ namespace AudioPlayerWebAPI.Controllers
         /// </summary>
         /// <param name="updateUserDto">UpdateUserDto object</param>
         /// <response code="200">Success</response>
-        /// <response code="404">Bad request</response>
+        /// <response code="404">Not found</response>
+        /// <response code="400">Bad request</response>
         /// <response code="401">Unauthorized</response>
         [HttpPut]
         [Authorize]
@@ -106,8 +124,8 @@ namespace AudioPlayerWebAPI.Controllers
         /// </summary>
         /// <param name="deleteUserDto">UpdateUserDto object</param>
         /// <response code="200">Success</response>
-        /// <response code="404">Bad request</response>
-        /// <response code="401">Unauthorized</response>
+        /// <response code="400">Bad request</response>
+        /// <response code="404">Not found</response>
         [HttpDelete]
         [Authorize]
         public async Task<IActionResult> Delete([FromBody] DeleteUserDto deleteUserDto)

@@ -17,18 +17,18 @@ namespace AudioPlayerWebAPI.UseCase.ViewModels
         public void Mapping(Profile profile)
         {
             profile.CreateMap<Playlist, PlaylistViewModel>()
-                .ForMember(pVm => pVm.Id,
-                    opt => opt.MapFrom(p => p.Id))
-                .ForMember(pVm => pVm.Title,
-                    opt => opt.MapFrom(p => p.Title))
-                .ForMember(pVm => pVm.Private,
-                    opt => opt.MapFrom(p => p.Private))
-                .ForMember(pVm => pVm.Image,
-                    opt => opt.MapFrom(p => p.Image))
-                .ForMember(pVm => pVm.Tracks,
-                    opt => opt.MapFrom(p => p.Tracks.Select(x => x.Track).ToList()))
-                .ForMember(pVm => pVm.CreationDate,
-                    opt => opt.MapFrom(p => p.CreationDate));
+                .ForMember(playlistViewModel => playlistViewModel.Id,
+                    opt => opt.MapFrom(playlist => playlist.Id))
+                .ForMember(playlistViewModel => playlistViewModel.Title,
+                    opt => opt.MapFrom(playlist => playlist.Title))
+                .ForMember(playlistViewModel => playlistViewModel.Private,
+                    opt => opt.MapFrom(playlist => playlist.Private))
+                .ForMember(playlistViewModel => playlistViewModel.Image,
+                    opt => opt.MapFrom(playlist => playlist.Image))
+                .ForMember(playlistViewModel => playlistViewModel.Tracks,
+                    opt => opt.MapFrom(playlist => playlist.Tracks.Select(x => x.Track).ToList()))
+                .ForMember(playlistViewModel => playlistViewModel.CreationDate,
+                    opt => opt.MapFrom(playlist => playlist.CreationDate));
         }
     }
 }

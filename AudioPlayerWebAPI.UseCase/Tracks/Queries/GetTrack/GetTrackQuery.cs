@@ -7,6 +7,6 @@ namespace AudioPlayerWebAPI.UseCase.Tracks.Queries.GetTrack
     {
         public Guid Id { get; set; }
         public Guid PlaylistId { get; set; }
-        public Guid Userid { get; set; }
+        public Guid UserId { get; set; }
     }
 }
