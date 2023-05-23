@@ -1,4 +1,7 @@
-﻿namespace AudioPlayerWebAPI.Services
+﻿using System.Security.Cryptography;
+using System.Text;
+
+namespace AudioPlayerWebAPI.Services
 {
     public static class Hash
     {

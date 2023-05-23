@@ -1,3 +1,15 @@
+using System.Reflection;
+using System.Text;
+using AudioPlayerWebAPI.Infrastructure;
+using AudioPlayerWebAPI.Middleware;
+using AudioPlayerWebAPI.Services.TokenService;
+using AudioPlayerWebAPI.UseCase;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.SwaggerGen;
+
 namespace AudioPlayerWebAPI
 {
     public class Program
@@ -5,71 +17,33 @@ namespace AudioPlayerWebAPI
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
-
             RegisterServices(builder.Services);
-
             var app = builder.Build();
-
             Configure(app);
-
-            using var scope = app.Services.CreateScope();
-            var apis = scope.ServiceProvider.GetServices<IApi>();
-            foreach (var api in apis)
-            {
-                if (api is null) throw new InvalidProgramException("Api not found");
-                api.Register(app);
-            }
-
             app.Run();
 
             void RegisterServices(IServiceCollection services)
             {
+                services.AddApplication(); 
+                services.AddDbConnection(builder.Configuration);
                 services.AddEndpointsApiExplorer();
                 services.AddSwaggerGen(options =>
                 {
-                    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-                    {
-                        In = ParameterLocation.Header,
-                        Description = "Please enter a valid token",
-                        Name = "Authorization",
-                        Type = SecuritySchemeType.ApiKey,
-                        BearerFormat = "JWT",
-                        Scheme = "Bearer"
-                    });
-                    options.AddSecurityRequirement(new OpenApiSecurityRequirement
-                    {
-                        {
-                            new OpenApiSecurityScheme
-                            {
-                                Reference = new OpenApiReference
-                                {
-                                    Type=ReferenceType.SecurityScheme,
-                                    Id="Bearer"
-                                },
-                                Scheme = "Oauth2",
-                                Name = "Bearer",
-                                In = ParameterLocation.Header,
-
-                            },
-                            Array.Empty<string>()
-                        }
-                    });
+                    var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                    options.IncludeXmlComments(xmlPath);
                 });
-                builder.Services.AddCors();
-                services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-                services.AddDbContext<AudioPlayerDbContext>(options =>
+                services.AddCors(option =>
                 {
-                    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+                    option.AddPolicy("AllowAll", policy =>
+                    {
+                        policy.AllowAnyHeader();
+                        policy.AllowAnyMethod();
+                        policy.AllowAnyOrigin();
+                    });
                 });
-                services.AddScoped<IValidator<User>, UserValidator>();
-                services.AddScoped<IValidator<RegisterDto>, RegisterUserDtoValidator>();
-                services.AddScoped<IValidator<LoginDto>, LoginUserDtoValidator>();
-                services.AddScoped<IValidator<TrackDto>, TrackDtoValidator>();
-                services.AddScoped<IValidator<Playlist>, PlaylistValidator>();
-                services.AddScoped<ITrackRepository, TrackRepository>();
-                services.AddScoped<IPlaylistRepository, PlaylistRepository>();
-                services.AddScoped<IUserRepository, UserRepository>();
-                services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
+                builder.Services.AddVersionedApiExplorer(options => options.GroupNameFormat = "'v'VVV");
+                builder.Services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
                 services.AddSingleton<ITokenService>(new TokenService());
                 services.AddAuthorization();
                 services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -84,37 +58,35 @@ namespace AudioPlayerWebAPI
                             ValidIssuer = builder.Configuration["Jwt:Issuer"],
                             ValidAudience = builder.Configuration["Jwt:Audience"],
                             IssuerSigningKey = new SymmetricSecurityKey(
-                                Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+                                Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!))
                         };
                     });
-
-                services.AddTransient<IApi, TrackApi>();
-                services.AddTransient<IApi, PlaylistApi>();
-                services.AddTransient<IApi, FileApi>();
-                services.AddTransient<IApi, UserApi>();
-                services.AddTransient<IApi, AuthApi>();
             }
 
             void Configure(WebApplication app)
             {
-                app.UseAuthentication();
-                app.UseAuthorization();
-                app.UseCors(corsPolicyBuilder => corsPolicyBuilder.AllowAnyOrigin());
                 if (app.Environment.IsDevelopment())
                 {
-                    app.UseSwagger();
-                    app.UseSwaggerUI(options =>
-                    {
-                        options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
-                        options.RoutePrefix = string.Empty;
-                    });
                     app.UseDeveloperExceptionPage();
-                    //using var scope = app.Services.CreateScope();
-                    //var db = scope.ServiceProvider.GetRequiredService<AudioPlayerDbContext>();
-                    //db.Database.EnsureCreated();
+                    using var scope = app.Services.CreateScope();
+                    var db = scope.ServiceProvider.GetRequiredService<AudioPlayerDbContext>();
+                    db.Database.EnsureCreated();
                 }
-
+                app.UseCustomExceptionHandler();
+                app.UseRouting();
                 app.UseHttpsRedirection();
+                app.UseCors("AllowAll");
+                app.UseAuthentication();
+                app.UseAuthorization();
+                app.UseApiVersioning();
+                app.UseCors(policyBuilder => policyBuilder.AllowAnyOrigin());
+                app.UseSwagger();
+                app.UseSwaggerUI(options =>
+                {
+                    options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
+                    options.RoutePrefix = string.Empty;
+                });
+                app.MapControllers();
             }
         }
     }
