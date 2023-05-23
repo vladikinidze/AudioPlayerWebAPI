@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using AudioPlayerWebAPI.UseCase.ViewModels;
+using MediatR;
 
 namespace AudioPlayerWebAPI.UseCase.Playlists.Queries.GetPlaylists
 {

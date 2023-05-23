@@ -1,6 +1,6 @@
 ﻿using AudioPlayerWebAPI.UseCase.Dtos;
 
-namespace AudioPlayerWebAPI.UseCase.Playlists.Queries.GetPlaylists
+namespace AudioPlayerWebAPI.UseCase.ViewModels
 {
     public class PlaylistListViewModel
     {

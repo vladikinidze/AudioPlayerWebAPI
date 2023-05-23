@@ -12,9 +12,14 @@ namespace AudioPlayerWebAPI.Models
         [Required]
         public Guid PlaylistId { get; set; }
         [Required]
-        public string Title { get; set; }
-        public string? Text { get; set; }
+        public string Title { get; set; } = null!;
+
+        [Required]
+        public IFormFile Audio { get; set; } = null!;
+
+        [Required]
         public bool Explicit { get; set; }
+        public string? Text { get; set; }
 
         public void Mapping(Profile profile)
         {

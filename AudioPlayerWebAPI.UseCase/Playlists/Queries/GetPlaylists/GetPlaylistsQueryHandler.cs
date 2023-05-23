@@ -1,5 +1,6 @@
 ﻿using AudioPlayerWebAPI.UseCase.Dtos;
 using AudioPlayerWebAPI.UseCase.Interfaces;
+using AudioPlayerWebAPI.UseCase.ViewModels;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using MediatR;

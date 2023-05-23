@@ -19,6 +19,10 @@ namespace AudioPlayerWebAPI.Infrastructure
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<User>()
+                .HasOne(u => u.RefreshToken)
+                .WithOne(r => r.User)
+                .HasForeignKey<RefreshToken>(r => r.Id);
             modelBuilder.ApplyConfiguration(new PlaylistConfiguration());
             modelBuilder.ApplyConfiguration(new TrackConfiguration());
             modelBuilder.ApplyConfiguration(new UserPlaylistsConfiguration());

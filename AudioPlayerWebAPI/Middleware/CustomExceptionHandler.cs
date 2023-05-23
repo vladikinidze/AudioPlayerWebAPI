@@ -39,9 +39,17 @@ namespace AudioPlayerWebAPI.Middleware
                 case NotFoundException:
                     code = HttpStatusCode.NotFound;
                     break;
-                case NotAllowedFileException fileException :
+                case NotAllowedFileException fileException:
                     code = HttpStatusCode.BadRequest;
                     result = fileException.Message;
+                    break;
+                case EmailAlreadyInUseException emailAlreadyInUseException:
+                    code = HttpStatusCode.BadRequest;
+                    result = emailAlreadyInUseException.Message;
+                    break;
+                case RefreshTokenException refreshTokenException:
+                    code = HttpStatusCode.BadRequest;
+                    result = refreshTokenException.Message;
                     break;
             }
             context.Response.ContentType = "application/json";

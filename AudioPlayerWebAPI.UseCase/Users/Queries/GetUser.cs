@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace AudioPlayerWebAPI.UseCase.User.Queries
+﻿namespace AudioPlayerWebAPI.UseCase.Users.Queries
 {
-    internal class GetUser
+    public class GetUser
     {
     }
 }

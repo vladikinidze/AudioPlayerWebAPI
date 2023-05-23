@@ -2,12 +2,15 @@ using System.Reflection;
 using System.Text;
 using AudioPlayerWebAPI.Infrastructure;
 using AudioPlayerWebAPI.Middleware;
-using AudioPlayerWebAPI.Services.TokenService;
+using AudioPlayerWebAPI.Services.FileService;
+using AudioPlayerWebAPI.Services.UserTokenService;
 using AudioPlayerWebAPI.UseCase;
+using AudioPlayerWebAPI.UseCase.Interfaces;
+using AudioPlayerWebAPI.UseCase.Mapping;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace AudioPlayerWebAPI
@@ -24,15 +27,14 @@ namespace AudioPlayerWebAPI
 
             void RegisterServices(IServiceCollection services)
             {
+                services.AddAutoMapper(config =>
+                {
+                    config.AddProfile(new MappingProfile(Assembly.GetExecutingAssembly()));
+                    config.AddProfile(new MappingProfile(typeof(IAudioPlayerDbContext).Assembly));
+                });
                 services.AddApplication(); 
                 services.AddDbConnection(builder.Configuration);
-                services.AddEndpointsApiExplorer();
-                services.AddSwaggerGen(options =>
-                {
-                    var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-                    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-                    options.IncludeXmlComments(xmlPath);
-                });
+                services.AddControllers();
                 services.AddCors(option =>
                 {
                     option.AddPolicy("AllowAll", policy =>
@@ -42,10 +44,16 @@ namespace AudioPlayerWebAPI
                         policy.AllowAnyOrigin();
                     });
                 });
-                builder.Services.AddVersionedApiExplorer(options => options.GroupNameFormat = "'v'VVV");
-                builder.Services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
-                services.AddSingleton<ITokenService>(new TokenService());
-                services.AddAuthorization();
+                services.AddVersionedApiExplorer(options => options.GroupNameFormat = "'v'VVV");
+                services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
+                services.AddSingleton<IFileService>(new FileService());
+                services.AddSingleton<IUserTokenService>(new UserTokenService());
+                services.AddSwaggerGen(options =>
+                {
+                    var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                    options.IncludeXmlComments(xmlPath);
+                });
                 services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                     .AddJwtBearer(options =>
                     {
@@ -61,6 +69,8 @@ namespace AudioPlayerWebAPI
                                 Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!))
                         };
                     });
+                services.AddAuthorization();
+                services.AddApiVersioning();
             }
 
             void Configure(WebApplication app)
@@ -72,6 +82,18 @@ namespace AudioPlayerWebAPI
                     var db = scope.ServiceProvider.GetRequiredService<AudioPlayerDbContext>();
                     db.Database.EnsureCreated();
                 }
+                app.UseSwagger();
+                app.UseSwaggerUI(config =>
+                {
+                    var provider = app.Services.GetRequiredService<IApiVersionDescriptionProvider>();
+                    foreach (var description in provider.ApiVersionDescriptions)
+                    {
+                        config.SwaggerEndpoint(
+                            $"/swagger/{description.GroupName}/swagger.json",
+                            description.GroupName.ToUpperInvariant());
+                        config.RoutePrefix = string.Empty;
+                    }
+                });
                 app.UseCustomExceptionHandler();
                 app.UseRouting();
                 app.UseHttpsRedirection();
@@ -79,13 +101,6 @@ namespace AudioPlayerWebAPI
                 app.UseAuthentication();
                 app.UseAuthorization();
                 app.UseApiVersioning();
-                app.UseCors(policyBuilder => policyBuilder.AllowAnyOrigin());
-                app.UseSwagger();
-                app.UseSwaggerUI(options =>
-                {
-                    options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
-                    options.RoutePrefix = string.Empty;
-                });
                 app.MapControllers();
             }
         }

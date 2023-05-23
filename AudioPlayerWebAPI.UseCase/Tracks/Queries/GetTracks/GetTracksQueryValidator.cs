@@ -6,8 +6,8 @@ namespace AudioPlayerWebAPI.UseCase.Tracks.Queries.GetTracks
     {
         public GetTracksQueryValidator()
         {
-            RuleFor(gt => gt.PlaylistId).NotEqual(Guid.Empty);
-            RuleFor(gt => gt.UserId).NotEqual(Guid.Empty);
+            RuleFor(tracksQuery => tracksQuery.PlaylistId).NotEqual(Guid.Empty);
+            RuleFor(tracksQuery => tracksQuery.UserId).NotEqual(Guid.Empty);
         }
     }
 }

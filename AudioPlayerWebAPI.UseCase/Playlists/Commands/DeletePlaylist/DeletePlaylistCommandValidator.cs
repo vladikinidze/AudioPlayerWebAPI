@@ -6,9 +6,9 @@ namespace AudioPlayerWebAPI.UseCase.Playlists.Commands.DeletePlaylist
     {
         public DeletePlaylistCommandValidator()
         {
-            RuleFor(upc => upc.Id)
+            RuleFor(playlistCommand => playlistCommand.Id)
                 .NotEqual(Guid.Empty);
-            RuleFor(upc => upc.UserId)
+            RuleFor(playlistCommand => playlistCommand.UserId)
                 .NotEqual(Guid.Empty);
         }
     }

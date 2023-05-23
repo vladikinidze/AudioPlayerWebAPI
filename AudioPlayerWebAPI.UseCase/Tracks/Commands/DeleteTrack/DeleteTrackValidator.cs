@@ -6,9 +6,9 @@ namespace AudioPlayerWebAPI.UseCase.Tracks.Commands.DeleteTrack
     {
         public DeleteTrackValidator()
         {
-            RuleFor(dtc => dtc.PlaylistId).NotEqual(Guid.Empty);
-            RuleFor(dtc => dtc.UserId).NotEqual(Guid.Empty);
-            RuleFor(dtc => dtc.Id).NotEqual(Guid.Empty);
+            RuleFor(trackCommand => trackCommand.PlaylistId).NotEqual(Guid.Empty);
+            RuleFor(trackCommand => trackCommand.UserId).NotEqual(Guid.Empty);
+            RuleFor(trackCommand => trackCommand.Id).NotEqual(Guid.Empty);
         }
     }
 }

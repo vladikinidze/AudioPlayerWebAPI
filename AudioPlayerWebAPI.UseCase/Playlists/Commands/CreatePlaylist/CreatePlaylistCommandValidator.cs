@@ -6,10 +6,10 @@ namespace AudioPlayerWebAPI.UseCase.Playlists.Commands.CreatePlaylist
     {
         public CreatePlaylistCommandValidator()
         {
-            RuleFor(cpc => cpc.Title)
+            RuleFor(playlistCommand => playlistCommand.Title)
                 .NotEmpty()
                 .MaximumLength(100);
-            RuleFor(cpc => cpc.UserId)
+            RuleFor(playlistCommand => playlistCommand.UserId)
                 .NotEqual(Guid.Empty);
         }
     }

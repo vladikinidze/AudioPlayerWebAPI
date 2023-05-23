@@ -8,8 +8,11 @@ namespace AudioPlayerWebAPI.Models
     public class CreatePlaylistDto : IMap<CreatePlaylistCommand>
     {
         [Required]
-        public string Title { get; set; }
-        public string? Description { get; set; }
+        public string Title { get; set; } = null!;
+
+        [Required]
+        public bool Private { get; set; }
+        public IFormFile? Image { get; set; }
 
         public void Mapping(Profile profile)
         {
