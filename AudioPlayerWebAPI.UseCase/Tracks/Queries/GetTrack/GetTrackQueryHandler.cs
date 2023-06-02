@@ -31,7 +31,7 @@ namespace AudioPlayerWebAPI.UseCase.Tracks.Queries.GetTrack
                 {
                     var userPlaylist = await _context.UserPlaylists
                         .FirstOrDefaultAsync(up => up.PlaylistId == playlist.Id
-                                                   && up.UserId == request.Userid, cancellationToken);
+                                                   && up.UserId == request.UserId, cancellationToken);
                     if (userPlaylist == null)
                     {
                         throw new NotFoundException(nameof(Playlist), request.PlaylistId.ToString());
@@ -43,9 +43,7 @@ namespace AudioPlayerWebAPI.UseCase.Tracks.Queries.GetTrack
                     .ProjectTo<TrackViewModel>(_mapper.ConfigurationProvider)
                     .FirstOrDefaultAsync(t => t.Id == request.Id, cancellationToken);
 
-                return track == null
-                    ? throw new NotFoundException(nameof(Track), request.Id.ToString())
-                    : _mapper.Map<TrackViewModel>(track);
+                return track ?? throw new NotFoundException(nameof(Track), request.Id.ToString());
             }
 
             throw new NotFoundException(nameof(Playlist), request.PlaylistId.ToString());

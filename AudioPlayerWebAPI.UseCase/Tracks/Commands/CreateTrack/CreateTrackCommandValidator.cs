@@ -6,11 +6,12 @@ namespace AudioPlayerWebAPI.UseCase.Tracks.Commands.CreateTrack
     {
         public CreateTrackCommandValidator()
         {
-            RuleFor(ctc => ctc.Title)
+            RuleFor(trackCommand => trackCommand.Title)
                 .NotEmpty()
                 .MaximumLength(100);
-            RuleFor(ctc => ctc.UserId).NotEqual(Guid.Empty);
-            RuleFor(ctc => ctc.PlaylistId).NotEqual(Guid.Empty);
+            RuleFor(trackCommand => trackCommand.UserId).NotEqual(Guid.Empty);
+            RuleFor(trackCommand => trackCommand.PlaylistId).NotEqual(Guid.Empty);
+            RuleFor(trackCommand => trackCommand.Audio).NotEmpty();
         }
     }
 }

@@ -31,9 +31,19 @@ namespace AudioPlayerWebAPI.UseCase.Tracks.Commands.UpdateTrack
 
                 if (userPlaylists is { IsOwner: true })
                 {
+                    if (request.Audio != null)  
+                    {
+                        var audio = Path.Combine(Directory.GetCurrentDirectory(), "Upload\\Files\\Audio",
+                            playlistTracks.Track.Audio!);
+                        if (File.Exists(audio))
+                        {
+                            File.Delete(audio);
+                        }
+                        playlistTracks.Track.Audio = request.Audio;
+                    }
                     playlistTracks.Track.Title = request.Title;
                     playlistTracks.Track.Text = request.Text;
-
+                    playlistTracks.Track.Explicit = request.Explicit;
                     await _context.SaveChangesAsync(cancellationToken);
                     return Unit.Value;
                 }

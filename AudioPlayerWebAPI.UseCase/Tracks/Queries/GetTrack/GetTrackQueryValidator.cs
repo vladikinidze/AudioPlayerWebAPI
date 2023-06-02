@@ -6,7 +6,7 @@ namespace AudioPlayerWebAPI.UseCase.Tracks.Queries.GetTrack
     {
         public GetTrackQueryValidator()
         {
-            RuleFor(gt => gt.Id).NotEqual(Guid.Empty);
+            RuleFor(trackQuery => trackQuery.Id).NotEqual(Guid.Empty);
         }
     }
 }

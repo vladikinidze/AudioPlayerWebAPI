@@ -6,12 +6,12 @@ namespace AudioPlayerWebAPI.UseCase.Playlists.Commands.UpdatePlaylist
     {
         public UpdatePlaylistCommandValidator()
         {
-            RuleFor(upc => upc.Title)
+            RuleFor(playlistCommand => playlistCommand.Title)
                 .NotEmpty()
                 .MaximumLength(100);
-            RuleFor(upc => upc.Id)
+            RuleFor(playlistCommand => playlistCommand.Id)
                 .NotEqual(Guid.Empty);
-            RuleFor(upc => upc.UserId)
+            RuleFor(playlistCommand => playlistCommand.UserId)
                 .NotEqual(Guid.Empty);
         }
     }

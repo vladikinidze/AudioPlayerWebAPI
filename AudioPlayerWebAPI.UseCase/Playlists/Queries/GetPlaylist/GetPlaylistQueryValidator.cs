@@ -6,7 +6,7 @@ namespace AudioPlayerWebAPI.UseCase.Playlists.Queries.GetPlaylist
     {
         public GetPlaylistQueryValidator()
         {
-            RuleFor(gpq => gpq.Id).NotEqual(Guid.Empty);
+            RuleFor(playlistQuery => playlistQuery.Id).NotEqual(Guid.Empty);
         }
     }
 }

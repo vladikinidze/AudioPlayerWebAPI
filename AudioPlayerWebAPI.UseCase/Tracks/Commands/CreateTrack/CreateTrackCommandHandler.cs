@@ -35,6 +35,7 @@ namespace AudioPlayerWebAPI.UseCase.Tracks.Commands.CreateTrack
                 Text = request.Text,
                 Explicit = request.Explicit,
                 AddedDate = DateTime.Now,
+                Audio = request.Audio,
             };
 
             var playlistTracks = new PlaylistTracks()
