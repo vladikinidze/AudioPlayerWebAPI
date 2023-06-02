@@ -3,67 +3,67 @@ using System.Text.Json;
 using AudioPlayerWebAPI.UseCase.Exceptions;
 using ValidationException = FluentValidation.ValidationException;
 
-namespace AudioPlayerWebAPI.Middleware
+namespace AudioPlayerWebAPI.Middleware;
+
+public class CustomExceptionHandler
 {
-    public class CustomExceptionHandler
+    private readonly RequestDelegate _next;
+
+    public CustomExceptionHandler(RequestDelegate next)
     {
-        private readonly RequestDelegate _next;
+        _next = next;
+    }
 
-        public CustomExceptionHandler(RequestDelegate next)
+    public async Task Invoke(HttpContext context)
+    {
+        try
         {
-            _next = next;
+            await _next(context);
         }
-
-        public async Task Invoke(HttpContext context)
+        catch (Exception exception)
         {
-            try
-            {
-                await _next(context);
-            }
-            catch (Exception exception)
-            {
-                await HandleExceptionAsync(context, exception);
-            }
+            await HandleExceptionAsync(context, exception);
         }
+    }
 
-        private Task HandleExceptionAsync(HttpContext context, Exception exception)
+    private Task HandleExceptionAsync(HttpContext context, Exception exception)
+    {
+        var code = HttpStatusCode.InternalServerError;
+        string? result = null;
+        switch (exception)
         {
-            var code = HttpStatusCode.InternalServerError;
-            var result = string.Empty;
-            switch (exception)
-            {
-                case ValidationException validationException:
-                    code = HttpStatusCode.BadRequest;
-                    result = JsonSerializer.Serialize(validationException.Errors);
-                    break;
-                case NotFoundException:
-                    code = HttpStatusCode.NotFound;
-                    break;
-                case NotAllowedFileException fileException:
-                    code = HttpStatusCode.BadRequest;
-                    result = fileException.Message;
-                    break;
-                case EmailAlreadyInUseException emailAlreadyInUseException:
-                    code = HttpStatusCode.BadRequest;
-                    result = emailAlreadyInUseException.Message;
-                    break;
-                case RefreshTokenException refreshTokenException:
-                    code = HttpStatusCode.BadRequest;
-                    result = refreshTokenException.Message;
-                    break;
-            }
-            context.Response.ContentType = "application/json";
-            context.Response.StatusCode = (int)code;
-
-            if (result == string.Empty)
-            {
-                result = JsonSerializer.Serialize(new
-                {
-                    error = exception.Message,
-                    code
-                });
-            }
-            return context.Response.WriteAsync(result);
+            case ValidationException validationException:
+                code = HttpStatusCode.BadRequest;
+                result = validationException.Errors.First().ErrorMessage;
+                break;
+            case NotFoundException:
+                code = HttpStatusCode.NotFound;
+                break;
+            case NotAllowedFileException:
+                code = HttpStatusCode.BadRequest;
+                break;
+            case EmailAlreadyInUseException:
+                code = HttpStatusCode.BadRequest;
+                break;
+            case RefreshTokenException:
+                code = HttpStatusCode.BadRequest;
+                break;
+            case InvalidLoginException:
+                code = HttpStatusCode.BadRequest;
+                break;
+            default:
+                code = HttpStatusCode.BadRequest;
+                break;
         }
+        context.Response.ContentType = "application/json";
+        context.Response.StatusCode = (int)code;
+
+        var response = JsonSerializer.Serialize(new
+        {
+            error = result ?? exception.Message,
+            code
+        });
+
+        return context.Response.WriteAsync(response);
     }
 }

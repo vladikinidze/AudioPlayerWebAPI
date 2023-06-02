@@ -1,36 +1,36 @@
-﻿using AudioPlayerWebAPI.Entities;
-using AudioPlayerWebAPI.UseCase.Exceptions;
+﻿using AudioPlayerWebAPI.UseCase.Exceptions;
 using AudioPlayerWebAPI.UseCase.Interfaces;
-using AudioPlayerWebAPI.UseCase.Tokens;
+using AudioPlayerWebAPI.UseCase.Services.HashService;
+using AudioPlayerWebAPI.UseCase.Services.TokenService;
 using AudioPlayerWebAPI.UseCase.ViewModels;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 
-namespace AudioPlayerWebAPI.UseCase.Users.Commands.Login
+namespace AudioPlayerWebAPI.UseCase.Users.Commands.Login;
+
+public class LoginCommandHandler : IRequestHandler<LoginCommand, AuthViewModel>
 {
-    public class LoginCommandHandler : IRequestHandler<LoginCommand, AuthViewModel>
+    private readonly IAudioPlayerDbContext _context;
+    private readonly ITokenService _tokenService;
+    private readonly IHashService _hashService;
+
+    public LoginCommandHandler(IAudioPlayerDbContext context, 
+        ITokenService tokenService, IHashService hashService)
     {
-        private readonly IAudioPlayerDbContext _context;
-        private readonly IConfiguration _configuration;
-        private readonly ITokenService _tokenService;
+        _context = context;
+        _tokenService = tokenService;
+        _hashService = hashService;
+    }
 
-        public LoginCommandHandler(IAudioPlayerDbContext context, IConfiguration configuration, ITokenService tokenService)
-        {
-            _context = context;
-            _configuration = configuration;
-            _tokenService = tokenService;
-        }
+    public async Task<AuthViewModel> Handle(LoginCommand request, CancellationToken cancellationToken)
+    {
+        var password = _hashService.GetSha1Hash(request.Password);
+        var user = await _context.Users
+            .FirstOrDefaultAsync(u => u.Email == request.Email
+                                      && u.Password == password, cancellationToken);
 
-        public async Task<AuthViewModel> Handle(LoginCommand request, CancellationToken cancellationToken)
-        {
-            var user = await _context.Users
-                .FirstOrDefaultAsync(u => u.Email == request.Email
-                                          && u.Password == request.Password, cancellationToken);
-
-            return user == null
-                ? throw new NotFoundException(nameof(User), request.Email)
-                : await _tokenService.BuildTokens(user, cancellationToken);
-        }
+        return user == null
+            ? throw new InvalidLoginException("Invalid Login or password")
+            : await _tokenService.BuildTokens(user, cancellationToken);
     }
 }

@@ -1,7 +1,7 @@
 ﻿using AudioPlayerWebAPI.UseCase.ViewModels;
 using MediatR;
 
-namespace AudioPlayerWebAPI.UseCase.Users.Commands.RefreshTokenCommand
+namespace AudioPlayerWebAPI.UseCase.Users.Commands.RefreshToken
 {
     public class RefreshTokenCommand : IRequest<AuthViewModel>
     {

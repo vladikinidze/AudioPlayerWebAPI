@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AudioPlayerWebAPI.Entities;
 using AudioPlayerWebAPI.UseCase.Dtos;
+using AudioPlayerWebAPI.UseCase.Exceptions;
 using AudioPlayerWebAPI.UseCase.Interfaces;
 using AudioPlayerWebAPI.UseCase.ViewModels;
 using AutoMapper;
@@ -13,7 +15,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AudioPlayerWebAPI.UseCase.Playlists.Queries.GerPlaylistsByUserId
 {
-    public class GetPlaylistsByUserIdQueryHandler : IRequestHandler<GetPlaylistsByUserIdQuery, PlaylistListViewModel>
+    public class GetPlaylistsByUserIdQueryHandler 
+        : IRequestHandler<GetPlaylistsByUserIdQuery, PlaylistListViewModel>
     {
         private readonly IAudioPlayerDbContext _context;
         private readonly IMapper _mapper;
@@ -26,12 +29,19 @@ namespace AudioPlayerWebAPI.UseCase.Playlists.Queries.GerPlaylistsByUserId
 
         public async Task<PlaylistListViewModel> Handle(GetPlaylistsByUserIdQuery request, CancellationToken cancellationToken)
         {
-            var playlists = await _context.UserPlaylists
-                .Where(p => p.UserId == request.UserId)
-                .ProjectTo<PlaylistDto>(_mapper.ConfigurationProvider)
-                .ToListAsync(cancellationToken);
+            var user = await _context.Users
+                .FirstOrDefaultAsync(user => user.Id == request.UserId, cancellationToken);
 
-            return new PlaylistListViewModel { Playlists = playlists };
+            if (user != null)
+            {
+                var playlists = await _context.UserPlaylists
+                    .ProjectTo<PlaylistDto>(_mapper.ConfigurationProvider)
+                    .Where(p => p.UserId == user.Id && p.Title != "Favorite")
+                    .ToListAsync(cancellationToken);
+                return new PlaylistListViewModel { Playlists = playlists };
+            }
+
+            throw new NotFoundException(nameof(User), request.UserId.ToString());
         }
     }
 }

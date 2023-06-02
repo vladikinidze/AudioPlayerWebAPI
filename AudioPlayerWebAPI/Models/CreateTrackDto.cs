@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using AudioPlayerWebAPI.UseCase.Mapping;
+﻿using AudioPlayerWebAPI.UseCase.Mapping;
 using AudioPlayerWebAPI.UseCase.Tracks.Commands.CreateTrack;
 using AutoMapper;
 
@@ -7,16 +6,10 @@ namespace AudioPlayerWebAPI.Models
 {
     public class CreateTrackDto : IMap<CreateTrackCommand>
     {
-        [Required]
-        public Guid PlaylistId { get; set; }
-        [Required]
-        public string Title { get; set; } = null!;
-
-        [Required]
-        public IFormFile Audio { get; set; } = null!;
-
-        [Required]
-        public bool Explicit { get; set; }
+        public Guid? PlaylistId { get; set; }
+        public string? Title { get; set; } = null!;
+        public IFormFile? Audio { get; set; } = null!;
+        public bool? Explicit { get; set; }
         public string? Text { get; set; }
 
         public void Mapping(Profile profile)

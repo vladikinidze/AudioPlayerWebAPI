@@ -7,10 +7,11 @@ namespace AudioPlayerWebAPI.UseCase.ViewModels
     public class TrackViewModel : IMap<Track>
     {
         public Guid Id { get; set; }
-        public string Title { get; set; }
+        public string Title { get; set; } = null!;
         public string? Text { get; set; }
-        public string Audio { get; set; }
+        public string Audio { get; set; } = null!;
         public bool Explicit { get; set; }
+        public Guid PlaylistId { get; set; }
         public DateTime AddedDate { get; set; }
 
         public void Mapping(Profile profile)
@@ -18,6 +19,9 @@ namespace AudioPlayerWebAPI.UseCase.ViewModels
             profile.CreateMap<Track, TrackViewModel>()
                 .ForMember(trackViewModel => trackViewModel.Id,
                     opt => opt.MapFrom(track => track.Id))
+                .ForMember(trackViewModel => trackViewModel.PlaylistId,
+                    opt => opt.MapFrom(track => track.Playlists.
+                        First(p => p.TrackId == Id && p.IsParent).PlaylistId))
                 .ForMember(trackViewModel => trackViewModel.Title,
                     opt => opt.MapFrom(track => track.Title))
                 .ForMember(trackViewModel => trackViewModel.Audio,

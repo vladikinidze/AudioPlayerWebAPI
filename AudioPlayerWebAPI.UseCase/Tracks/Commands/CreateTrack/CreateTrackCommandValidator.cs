@@ -11,6 +11,7 @@ namespace AudioPlayerWebAPI.UseCase.Tracks.Commands.CreateTrack
                 .MaximumLength(100);
             RuleFor(trackCommand => trackCommand.UserId).NotEqual(Guid.Empty);
             RuleFor(trackCommand => trackCommand.PlaylistId).NotEqual(Guid.Empty);
+            RuleFor(trackCommand => trackCommand.Audio).NotEmpty();
         }
     }
 }

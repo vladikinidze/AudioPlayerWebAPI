@@ -1,13 +1,14 @@
 ﻿using AudioPlayerWebAPI.Entities;
+using AudioPlayerWebAPI.UseCase.Mapping;
 using AutoMapper;
 
 namespace AudioPlayerWebAPI.UseCase.ViewModels
 {
-    public class UserViewModel
+    public class UserViewModel : IMap<User>
     {
         public Guid Id { get; set; }
         public string Username { get; set; } = null!;
-        public string Email { get; set; }
+        public string Email { get; set; } = null!;
         public string? Image { get; set; }
 
         public void Mapping(Profile profile)

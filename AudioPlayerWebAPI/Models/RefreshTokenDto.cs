@@ -1,15 +1,14 @@
 ﻿using AudioPlayerWebAPI.UseCase.Mapping;
-using AudioPlayerWebAPI.UseCase.Users.Commands.RefreshTokenCommand;
+using AudioPlayerWebAPI.UseCase.Users.Commands.RefreshToken;
 using AutoMapper;
 
 namespace AudioPlayerWebAPI.Models
 {
     public class RefreshTokenDto : IMap<RefreshTokenCommand>
     {
-        public Guid UserId { get; set; }
-        public string AccessToken { get; set; } = null!;
-        public string RefreshToken { get; set; } = null!;
-
+        public Guid? UserId { get; set; }  
+        public string? AccessToken { get; set; } = null!;
+        public string? RefreshToken { get; set; } = null!;
         public void Mapping(Profile profile)
         {
             profile.CreateMap<RefreshTokenDto, RefreshTokenCommand>()

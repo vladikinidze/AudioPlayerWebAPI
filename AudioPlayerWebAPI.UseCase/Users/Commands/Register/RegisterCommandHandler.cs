@@ -1,42 +1,72 @@
 ﻿using AudioPlayerWebAPI.Entities;
 using AudioPlayerWebAPI.UseCase.Exceptions;
 using AudioPlayerWebAPI.UseCase.Interfaces;
+using AudioPlayerWebAPI.UseCase.Services.HashService;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace AudioPlayerWebAPI.UseCase.Users.Commands.Register
+namespace AudioPlayerWebAPI.UseCase.Users.Commands.Register;
+
+public class RegisterCommandHandler : IRequestHandler<RegisterCommand, Guid>
 {
-    public class RegisterCommandHandler : IRequestHandler<RegisterCommand, Guid>
+    private readonly IAudioPlayerDbContext _context;
+    private readonly IHashService _hashService;
+
+    public RegisterCommandHandler(IAudioPlayerDbContext context, IHashService hashService)
     {
-        private readonly IAudioPlayerDbContext _context;
+        _context = context;
+        _hashService = hashService;
+    }
 
-        public RegisterCommandHandler(IAudioPlayerDbContext context)
+    public async Task<Guid> Handle(RegisterCommand request, CancellationToken cancellationToken)
+    {
+        var user = await _context.Users
+            .FirstOrDefaultAsync(x => x.Email == request.Email, cancellationToken);
+
+        if (user != null)
         {
-            _context = context;
+            throw new EmailAlreadyInUseException();
         }
 
-        public async Task<Guid> Handle(RegisterCommand request, CancellationToken cancellationToken)
+        user = new User
         {
-            var user = await _context.Users
-                .FirstOrDefaultAsync(x => x.Email == request.Email, cancellationToken);
+            Id = Guid.NewGuid(),
+            Email = request.Email,
+            Username = request.UserName,
+            Password = _hashService.GetSha1Hash(request.Password),
+            Image = "548864f8-319e-40ac-9f9b-a31f65ccb902.jpg",
+        };
 
-            if (user != null)
-            {
-                throw new EmailAlreadyInUseException();
-            }
+        var playlist = new Playlist
+        {
+            Id = Guid.NewGuid(),
+            Private = true,
+            Title = "Favorite",
+            CreationDate = DateTime.Now,
+        };
 
-            user = new User
-            {
-                Id = Guid.NewGuid(),
-                Email = request.Email,
-                Username = request.UserName,
-                Password = request.Password,
-                Image = "548864f8-319e-40ac-9f9b-a31f65ccb902.png",
-            };
+        var userPlaylist = new UserPlaylists
+        {
+            Playlist = playlist,
+            User = user,
+            PlaylistId = playlist.Id,
+            UserId = user.Id,
+            AddedDate = DateTime.Now,
+            IsOwner = true
+        };
 
-            await _context.Users.AddAsync(user, cancellationToken);
-            await _context.SaveChangesAsync(cancellationToken);
-            return user.Id;
-        }
+        var settings = new Settings
+        {
+            Explicit = false,
+            User = user,
+            Id = Guid.NewGuid()
+        };
+        
+        await _context.Playlists.AddAsync(playlist, cancellationToken);
+        await _context.Users.AddAsync(user, cancellationToken);
+        await _context.Settings.AddAsync(settings, cancellationToken);
+        await _context.UserPlaylists.AddAsync(userPlaylist, cancellationToken);
+        await _context.SaveChangesAsync(cancellationToken);
+        return user.Id;
     }
 }

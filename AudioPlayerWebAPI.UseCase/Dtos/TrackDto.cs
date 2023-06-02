@@ -7,27 +7,47 @@ namespace AudioPlayerWebAPI.UseCase.Dtos
     public class TrackDto : IMap<Track>
     {
         public Guid Id { get; set; }
-        public string Title { get; set; }
+        public string Title { get; set; } = null!;
         public string? Text { get; set; }
-        public string Audio { get; set; }
+        public string Audio { get; set; } = null!;
         public bool Explicit { get; set; }
         public DateTime AddedDate { get; set; }
+        public Guid PlaylistId { get; set; }
 
         public void Mapping(Profile profile)
         {
             profile.CreateMap<Track, TrackDto>()
-                .ForMember(tVm => tVm.Id,
-                    opt => opt.MapFrom(p => p.Id))
-                .ForMember(tVm => tVm.Title,
-                    opt => opt.MapFrom(p => p.Title))
-                .ForMember(tVm => tVm.Audio,
-                    opt => opt.MapFrom(p => p.Audio))
-                .ForMember(tVm => tVm.Text,
-                    opt => opt.MapFrom(p => p.Text))
-                .ForMember(tVm => tVm.Explicit,
-                    opt => opt.MapFrom(p => p.Explicit))
-                .ForMember(tVm => tVm.AddedDate,
-                    opt => opt.MapFrom(p => p.AddedDate));
+                .ForMember(trackDto => trackDto.Id,
+                    opt => opt.MapFrom(track => track.Id))
+                .ForMember(trackDto => trackDto.PlaylistId,
+                    opt => opt.MapFrom(track => 
+                        track.Playlists.First(tracks => tracks.TrackId == Id && tracks.IsParent).PlaylistId))
+                .ForMember(trackDto => trackDto.Title,
+                    opt => opt.MapFrom(track => track.Title))
+                .ForMember(trackDto => trackDto.Audio,
+                    opt => opt.MapFrom(track => track.Audio))
+                .ForMember(trackDto => trackDto.Text,
+                    opt => opt.MapFrom(track => track.Text))
+                .ForMember(trackDto => trackDto.Explicit,
+                    opt => opt.MapFrom(track => track.Explicit))
+                .ForMember(trackDto => trackDto.AddedDate,
+                    opt => opt.MapFrom(track => track.AddedDate));
+
+            profile.CreateMap<PlaylistTracks, TrackDto>()
+                .ForMember(trackDto => trackDto.Id,
+                    opt => opt.MapFrom(playlistTracks => playlistTracks.TrackId))
+                .ForMember(trackDto => trackDto.PlaylistId,
+                    opt => opt.MapFrom(playlistTracks => playlistTracks.PlaylistId))
+                .ForMember(trackDto => trackDto.Title,
+                    opt => opt.MapFrom(playlistTracks => playlistTracks.Track.Title))
+                .ForMember(trackDto => trackDto.Text,
+                    opt => opt.MapFrom(playlistTracks => playlistTracks.Track.Text))
+                .ForMember(trackDto => trackDto.AddedDate,
+                    opt => opt.MapFrom(playlistTracks => playlistTracks.Track.AddedDate))
+                .ForMember(trackDto => trackDto.Audio,
+                    opt => opt.MapFrom(playlistTracks => playlistTracks.Track.Audio))
+                .ForMember(trackDto => trackDto.Explicit,
+                    opt => opt.MapFrom(playlistTracks => playlistTracks.Track.Explicit));
         }
     }
 }

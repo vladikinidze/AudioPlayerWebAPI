@@ -1,4 +1,5 @@
-﻿using AudioPlayerWebAPI.UseCase.Dtos;
+﻿using System.Diagnostics.CodeAnalysis;
+using AudioPlayerWebAPI.UseCase.Dtos;
 using AudioPlayerWebAPI.UseCase.Interfaces;
 using AudioPlayerWebAPI.UseCase.ViewModels;
 using AutoMapper;
@@ -19,14 +20,31 @@ namespace AudioPlayerWebAPI.UseCase.Playlists.Queries.GetPlaylists
             _mapper = mapper;
         }
 
+        private bool NeedInclude(PlaylistDto playlistDto, GetPlaylistsQuery request)
+        {
+            return !playlistDto.Private || request.UserId != null && playlistDto.UserId == request.UserId;
+        }
+        
         public async Task<PlaylistListViewModel> Handle(GetPlaylistsQuery request, CancellationToken cancellationToken)
         {
             var playlists = await _context.UserPlaylists
+                .Where(x => x.IsOwner == true)
+                .OrderByDescending(userPlaylists => userPlaylists.AddedDate)
                 .ProjectTo<PlaylistDto>(_mapper.ConfigurationProvider)
-                .Where(p => !p.Private)
+                .Where(x => x.Title != "Favorite")
                 .ToListAsync(cancellationToken);
+            
+            playlists = playlists.Where(playlist => NeedInclude(playlist, request)).ToList();
 
-            return new PlaylistListViewModel { Playlists = playlists };
+            playlists.ForEach(playlist =>
+            {
+                playlist.Tracks = _context.PlaylistTracks
+                    .Where(tracks => tracks.PlaylistId == playlist.Id)
+                    .ProjectTo<TrackDto>(_mapper.ConfigurationProvider)
+                    .ToList();
+            });
+
+            return new PlaylistListViewModel { Playlists = playlists};
         }
     }
 }

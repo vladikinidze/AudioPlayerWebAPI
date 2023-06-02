@@ -28,8 +28,21 @@ namespace AudioPlayerWebAPI.UseCase.Playlists.Commands.UpdatePlaylist
             }
 
             userPlaylist.Playlist.Title = request.Title;
-            userPlaylist.Playlist.Image = request.Image;
+            userPlaylist.Playlist.Private = request.Private;
 
+            if (request.Image != null)
+            {
+                if (userPlaylist.Playlist.Image != null && userPlaylist.Playlist.Image != "548864f8-319e-40ac-9f9b-a31f65ccb902.jpg")
+                {
+                    var image = Path.Combine(Directory.GetCurrentDirectory(), "Upload\\Files\\Image", userPlaylist.Playlist.Image);
+                    if (File.Exists(image))
+                    {
+                        File.Delete(image);
+                    }
+                }
+                userPlaylist.Playlist.Image = request.Image;
+            }
+            
             await _context.SaveChangesAsync(cancellationToken);
             return Unit.Value;
         }

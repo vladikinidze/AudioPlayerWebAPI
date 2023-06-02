@@ -1,10 +1,9 @@
-﻿namespace AudioPlayerWebAPI.Infrastructure
+﻿namespace AudioPlayerWebAPI.Infrastructure;
+
+public class DbInitializer
 {
-    public class DbInitializer
+    public static void Initialize(AudioPlayerDbContext context)
     {
-        public static void Initialize(AudioPlayerDbContext context)
-        {
-            context.Database.EnsureCreated();
-        }
+        context.Database.EnsureCreated();
     }
 }
