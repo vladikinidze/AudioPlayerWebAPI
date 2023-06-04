@@ -30,4 +30,8 @@
 	  <ProjectReference Include="..\AudioPlayerWebAPI.UseCase\AudioPlayerWebAPI.UseCase.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="Upload\Files\Audio\" />
+	</ItemGroup>
+
 </Project>

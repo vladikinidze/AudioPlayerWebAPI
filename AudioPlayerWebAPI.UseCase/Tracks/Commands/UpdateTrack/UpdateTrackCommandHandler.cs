@@ -42,7 +42,7 @@ namespace AudioPlayerWebAPI.UseCase.Tracks.Commands.UpdateTrack
                         playlistTracks.Track.Audio = request.Audio;
                     }
                     playlistTracks.Track.Title = request.Title;
-                    playlistTracks.Track.Text = request.Text;
+                    playlistTracks.Track.Duration = request.Duration;
                     playlistTracks.Track.Explicit = request.Explicit;
                     await _context.SaveChangesAsync(cancellationToken);
                     return Unit.Value;

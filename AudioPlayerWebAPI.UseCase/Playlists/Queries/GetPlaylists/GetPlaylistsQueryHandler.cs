@@ -41,6 +41,7 @@ namespace AudioPlayerWebAPI.UseCase.Playlists.Queries.GetPlaylists
                 playlist.Tracks = _context.PlaylistTracks
                     .Where(tracks => tracks.PlaylistId == playlist.Id)
                     .ProjectTo<TrackDto>(_mapper.ConfigurationProvider)
+                    .OrderBy(x => x.AddedDate)
                     .ToList();
             });
 

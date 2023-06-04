@@ -10,7 +10,7 @@ namespace AudioPlayerWebAPI.Models
         public string? Username { get; set; } = null!;
         public string? Email { get; set; } = null!;
         public IFormFile? Image { get; set; }
-        // public string? Password { get; set; } = null!;
+        public bool EmptyImage { get; set; }
 
         public void Mapping(Profile profile)
         {

@@ -41,6 +41,7 @@ public class RegisterCommandHandler : IRequestHandler<RegisterCommand, Guid>
         {
             Id = Guid.NewGuid(),
             Private = true,
+            Image = "548864f8-319e-40ac-9f9b-a31f65ccb902.jpg",
             Title = "Favorite",
             CreationDate = DateTime.Now,
         };

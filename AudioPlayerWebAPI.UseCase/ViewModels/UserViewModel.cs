@@ -7,6 +7,7 @@ namespace AudioPlayerWebAPI.UseCase.ViewModels
     public class UserViewModel : IMap<User>
     {
         public Guid Id { get; set; }
+        public Guid FavoritePlaylistId { get; set; }
         public string Username { get; set; } = null!;
         public string Email { get; set; } = null!;
         public string? Image { get; set; }

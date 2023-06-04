@@ -3,7 +3,6 @@ using System.Text;
 using AudioPlayerWebAPI.Infrastructure;
 using AudioPlayerWebAPI.Middleware;
 using AudioPlayerWebAPI.Services.FileService;
-using AudioPlayerWebAPI.Services.UserTokenService;
 using AudioPlayerWebAPI.UseCase;
 using AudioPlayerWebAPI.UseCase.Interfaces;
 using AudioPlayerWebAPI.UseCase.Mapping;
@@ -47,7 +46,6 @@ public class Program
             services.AddVersionedApiExplorer(options => options.GroupNameFormat = "'v'VVV");
             services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
             services.AddSingleton<IFileService>(new FileService());
-            services.AddSingleton<IUserTokenService>(new UserTokenService());
             services.AddSwaggerGen(options =>
             {
                 var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";

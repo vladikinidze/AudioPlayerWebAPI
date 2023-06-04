@@ -17,6 +17,7 @@ public class AudioPlayerDbContext : DbContext, IAudioPlayerDbContext
     public DbSet<User> Users { get; set; } = null!;
     public DbSet<RefreshToken> RefreshTokens { get; set; } = null!;
     public DbSet<Settings> Settings { get; set; } = null!;
+    public DbSet<Error> Errors { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

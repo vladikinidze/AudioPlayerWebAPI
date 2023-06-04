@@ -22,7 +22,7 @@ public class GetUserSettingsQueryHandler : IRequestHandler<GetUserSettingsQuery,
     
     public async Task<SettingsViewModel> Handle(GetUserSettingsQuery request, CancellationToken cancellationToken)
     {
-        var settingsViewModel = await _context.Users
+        var settingsViewModel = await _context.Settings
             .ProjectTo<SettingsViewModel>(_mapper.ConfigurationProvider)
             .FirstOrDefaultAsync(x => x.UserId == request.UserId, cancellationToken);
 
