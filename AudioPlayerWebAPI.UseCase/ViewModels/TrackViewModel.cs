@@ -8,7 +8,7 @@ namespace AudioPlayerWebAPI.UseCase.ViewModels
     {
         public Guid Id { get; set; }
         public string Title { get; set; } = null!;
-        public string? Text { get; set; }
+        public double Duration { get; set; }
         public string Audio { get; set; } = null!;
         public bool Explicit { get; set; }
         public Guid PlaylistId { get; set; }
@@ -26,8 +26,8 @@ namespace AudioPlayerWebAPI.UseCase.ViewModels
                     opt => opt.MapFrom(track => track.Title))
                 .ForMember(trackViewModel => trackViewModel.Audio,
                     opt => opt.MapFrom(track => track.Audio))
-                .ForMember(trackViewModel => trackViewModel.Text,
-                    opt => opt.MapFrom(track => track.Text))
+                .ForMember(trackViewModel => trackViewModel.Duration,
+                    opt => opt.MapFrom(track => track.Duration))
                 .ForMember(trackViewModel => trackViewModel.Explicit,
                     opt => opt.MapFrom(track => track.Explicit))
                 .ForMember(trackViewModel => trackViewModel.AddedDate,

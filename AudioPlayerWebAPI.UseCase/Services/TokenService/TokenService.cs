@@ -3,6 +3,7 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using AudioPlayerWebAPI.Entities;
+using AudioPlayerWebAPI.UseCase.Dtos;
 using AudioPlayerWebAPI.UseCase.Interfaces;
 using AudioPlayerWebAPI.UseCase.ViewModels;
 using Microsoft.EntityFrameworkCore;
@@ -77,7 +78,18 @@ public class TokenService : ITokenService
         {
             _context.RefreshTokens.Remove(token);
         }
+
         await _context.RefreshTokens.AddAsync(refreshToken);
         return refreshToken;
+    }
+
+    public TokenDto ReadToken(string authorizationHeader)
+    {
+        var accessToken = new JwtSecurityTokenHandler().ReadJwtToken(authorizationHeader.Split(' ').Last());
+        var userId = accessToken.Claims
+            .FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)!.Value;
+        var email = accessToken.Claims
+            .FirstOrDefault(x => x.Type == ClaimTypes.Email)!.Value;
+        return new TokenDto { UserId = new Guid(userId), Email = email };
     }
 }

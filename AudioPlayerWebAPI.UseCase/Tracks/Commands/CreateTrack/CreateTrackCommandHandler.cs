@@ -32,7 +32,7 @@ namespace AudioPlayerWebAPI.UseCase.Tracks.Commands.CreateTrack
             {
                 Id = Guid.NewGuid(),
                 Title = request.Title,
-                Text = request.Text,
+                Duration = request.Duration,
                 Explicit = request.Explicit,
                 AddedDate = DateTime.Now,
                 Audio = request.Audio,

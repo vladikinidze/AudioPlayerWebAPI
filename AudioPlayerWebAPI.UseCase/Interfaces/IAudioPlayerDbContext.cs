@@ -13,5 +13,6 @@ public interface IAudioPlayerDbContext
     DbSet<User> Users { get; set; }
     DbSet<RefreshToken> RefreshTokens { get; set; }
     DbSet<Settings> Settings { get; set; }
+    DbSet<Error> Errors { get; set; }
     Task<int> SaveChangesAsync(CancellationToken cancellationToken);
 }

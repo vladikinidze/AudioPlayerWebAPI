@@ -11,7 +11,7 @@ namespace AudioPlayerWebAPI.Models
         public string? Title { get; set; } = null!;
         public IFormFile? Audio { get; set; } = null!;
         public bool? Explicit { get; set; }
-        public string? Text { get; set; }
+        public double Duration { get; set; }
 
         public void Mapping(Profile profile)
         {
@@ -22,8 +22,8 @@ namespace AudioPlayerWebAPI.Models
                     opt => opt.MapFrom(playlistDto => playlistDto.PlaylistId))
                 .ForMember(trackCommand => trackCommand.Title,
                     opt => opt.MapFrom(playlistDto => playlistDto.Title))
-                .ForMember(trackCommand => trackCommand.Text,
-                    opt => opt.MapFrom(playlistDto => playlistDto.Text))
+                .ForMember(trackCommand => trackCommand.Duration,
+                    opt => opt.MapFrom(playlistDto => playlistDto.Duration))
                 .ForMember(trackCommand => trackCommand.Explicit,
                     opt => opt.MapFrom(playlistDto => playlistDto.Explicit));
         }

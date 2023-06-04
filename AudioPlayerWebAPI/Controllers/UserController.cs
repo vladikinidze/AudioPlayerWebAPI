@@ -1,7 +1,8 @@
 ﻿using AudioPlayerWebAPI.Models;
 using AudioPlayerWebAPI.Services.FileService;
-using AudioPlayerWebAPI.Services.UserTokenService;
 using AudioPlayerWebAPI.Types;
+using AudioPlayerWebAPI.UseCase.Errors;
+using AudioPlayerWebAPI.UseCase.Services.TokenService;
 using AudioPlayerWebAPI.UseCase.Users.Commands.DeleteAccount;
 using AudioPlayerWebAPI.UseCase.Users.Commands.Login;
 using AudioPlayerWebAPI.UseCase.Users.Commands.RefreshToken;
@@ -26,10 +27,10 @@ public class UserController : ControllerBase
     private readonly IMapper _mapper;
     private readonly IMediator _mediator;
     private readonly IFileService _fileService;
-    private readonly IUserTokenService _tokenService;
+    private readonly ITokenService _tokenService;
 
     public UserController(IMapper mapper, IMediator mediator, 
-        IFileService fileService, IUserTokenService tokenService)
+        IFileService fileService, ITokenService tokenService)
     {
         _mapper = mapper;
         _mediator = mediator;
@@ -110,7 +111,7 @@ public class UserController : ControllerBase
     [Authorize]
     public async Task<IActionResult> GetSettings()
     {
-        var userId = _tokenService.GetUserId(HttpContext.Request.Headers["Authorization"].ToString());
+        var userId = _tokenService.ReadToken(HttpContext.Request.Headers["Authorization"].ToString()).UserId;
         var query = new GetUserSettingsQuery { UserId = userId };
         var vm = await _mediator.Send(query);
         return Ok(vm);
@@ -127,7 +128,7 @@ public class UserController : ControllerBase
     [Authorize]
     public async Task<IActionResult> SetSettings([FromBody] SettingsDto settingsDto)
     {
-        var userId = _tokenService.GetUserId(HttpContext.Request.Headers["Authorization"].ToString());
+        var userId = _tokenService.ReadToken(HttpContext.Request.Headers["Authorization"].ToString()).UserId;
         var command = _mapper.Map<SetSettingsCommand>(settingsDto);
         command.UserId = userId;
         await _mediator.Send(command);
@@ -146,10 +147,17 @@ public class UserController : ControllerBase
     [Authorize]
     public async Task<IActionResult> Update([FromForm] UpdateUserDto updateUserDto)
     {
-        var userId = _tokenService.GetUserId(HttpContext.Request.Headers["Authorization"].ToString());
-        var imagePath = await _fileService.Upload(updateUserDto.Image, FileType.Image);
+        var userId = _tokenService.ReadToken(HttpContext.Request.Headers["Authorization"].ToString()).UserId;
         var command = _mapper.Map<UpdateAccountCommand>(updateUserDto);
-        command.Image = imagePath;
+        if (updateUserDto.Image != null)
+        {
+            var imagePath = await _fileService.Upload(updateUserDto.Image, FileType.Image);
+            command.Image = imagePath;
+        }
+        if (updateUserDto.EmptyImage)
+        {
+            command.Image = "548864f8-319e-40ac-9f9b-a31f65ccb902.jpg";
+        }
         command.Id = userId;
         await _mediator.Send(command);
         return Ok();
@@ -166,9 +174,24 @@ public class UserController : ControllerBase
     [Authorize]
     public async Task<IActionResult> Delete([FromBody] DeleteUserDto deleteUserDto)
     {
-        var userId = _tokenService.GetUserId(HttpContext.Request.Headers["Authorization"].ToString());
+        var userId = _tokenService.ReadToken(HttpContext.Request.Headers["Authorization"].ToString()).UserId;
         var command = _mapper.Map<DeleteAccountCommand>(deleteUserDto);
         command.UserId = userId;
+        await _mediator.Send(command);
+        return Ok();
+    }
+    
+    /// <summary>
+    /// Report a error
+    /// </summary>
+    /// <param name="errorDto">ErrorDto object</param>
+    /// <response code="200">Success</response>
+    /// <response code="400">Bad request</response>
+    /// <response code="404">Not found</response>
+    [HttpPost("Error")]
+    public async Task<IActionResult> Report([FromBody] ErrorDto errorDto)
+    {
+        var command = _mapper.Map<ErrorCommand>(errorDto);
         await _mediator.Send(command);
         return Ok();
     }

@@ -29,8 +29,22 @@ namespace AudioPlayerWebAPI.UseCase.Users.Commands.UpdateAccount
                 throw new NotFoundException(nameof(User), request.Id.ToString());
             }
             user.Email = request.Email;
-            user.Image = request.Image;
             user.Username = request.Username;
+            
+            if (request.Image != null)
+            {
+                if (user.Image != null && user.Image != "548864f8-319e-40ac-9f9b-a31f65ccb902.jpg")
+                {
+                    var image = Path.Combine(Directory.GetCurrentDirectory(), "Upload\\Files\\Image", user.Image);
+                    if (File.Exists(image))
+                    {
+                        File.Delete(image);
+                    }
+                }
+                user.Image = request.Image;
+            }
+
+            await _context.SaveChangesAsync(cancellationToken);
             return Unit.Value;
         }
     }

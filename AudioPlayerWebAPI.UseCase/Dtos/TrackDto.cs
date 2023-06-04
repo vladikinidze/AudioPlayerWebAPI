@@ -8,7 +8,7 @@ namespace AudioPlayerWebAPI.UseCase.Dtos
     {
         public Guid Id { get; set; }
         public string Title { get; set; } = null!;
-        public string? Text { get; set; }
+        public double Duration { get; set; }
         public string Audio { get; set; } = null!;
         public bool Explicit { get; set; }
         public DateTime AddedDate { get; set; }
@@ -26,8 +26,8 @@ namespace AudioPlayerWebAPI.UseCase.Dtos
                     opt => opt.MapFrom(track => track.Title))
                 .ForMember(trackDto => trackDto.Audio,
                     opt => opt.MapFrom(track => track.Audio))
-                .ForMember(trackDto => trackDto.Text,
-                    opt => opt.MapFrom(track => track.Text))
+                .ForMember(trackDto => trackDto.Duration,
+                    opt => opt.MapFrom(track => track.Duration))
                 .ForMember(trackDto => trackDto.Explicit,
                     opt => opt.MapFrom(track => track.Explicit))
                 .ForMember(trackDto => trackDto.AddedDate,
@@ -40,8 +40,8 @@ namespace AudioPlayerWebAPI.UseCase.Dtos
                     opt => opt.MapFrom(playlistTracks => playlistTracks.PlaylistId))
                 .ForMember(trackDto => trackDto.Title,
                     opt => opt.MapFrom(playlistTracks => playlistTracks.Track.Title))
-                .ForMember(trackDto => trackDto.Text,
-                    opt => opt.MapFrom(playlistTracks => playlistTracks.Track.Text))
+                .ForMember(trackDto => trackDto.Duration,
+                    opt => opt.MapFrom(playlistTracks => playlistTracks.Track.Duration))
                 .ForMember(trackDto => trackDto.AddedDate,
                     opt => opt.MapFrom(playlistTracks => playlistTracks.Track.AddedDate))
                 .ForMember(trackDto => trackDto.Audio,

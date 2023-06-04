@@ -17,16 +17,16 @@ public class SetSettingsCommandHandler : IRequestHandler<SetSettingsCommand, Uni
 
     public async Task<Unit> Handle(SetSettingsCommand request, CancellationToken cancellationToken)
     {
-        var user = await _context.Users
-            .Include(x => x.Settings)
-            .FirstOrDefaultAsync(x => x.Id == request.UserId, cancellationToken);
+        var settings = await _context.Settings
+            .Include(x => x.User)
+            .FirstOrDefaultAsync(x => x.User.Id == request.UserId, cancellationToken);
 
-        if (user == null)
+        if (settings == null)
         {
             throw new NotFoundException(nameof(User), request.UserId.ToString());
         }
 
-        user.Settings.Explicit = request.Explicit;
+        settings.Explicit = request.Explicit;
         await _context.SaveChangesAsync(cancellationToken);
         return Unit.Value;
     }

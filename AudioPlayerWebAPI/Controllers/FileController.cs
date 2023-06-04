@@ -1,6 +1,4 @@
-﻿using System.Text.Json;
-using AudioPlayerWebAPI.Services.UserTokenService;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AudioPlayerWebAPI.Controllers;

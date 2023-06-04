@@ -1,12 +1,11 @@
 ﻿using FluentValidation;
 
-namespace AudioPlayerWebAPI.UseCase.Playlists.Queries.GetPlaylist
+namespace AudioPlayerWebAPI.UseCase.Playlists.Queries.GetPlaylist;
+
+public class GetPlaylistQueryValidator : AbstractValidator<GetPlaylistQuery>
 {
-    public class GetPlaylistQueryValidator : AbstractValidator<GetPlaylistQuery>
+    public GetPlaylistQueryValidator()
     {
-        public GetPlaylistQueryValidator()
-        {
-            RuleFor(playlistQuery => playlistQuery.Id).NotEqual(Guid.Empty);
-        }
+        RuleFor(playlistQuery => playlistQuery.Id).NotEqual(Guid.Empty);
     }
 }

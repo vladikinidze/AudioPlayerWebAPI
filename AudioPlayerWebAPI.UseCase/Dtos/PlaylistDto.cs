@@ -8,7 +8,7 @@ namespace AudioPlayerWebAPI.UseCase.Dtos
     {
         public Guid Id { get; set; }
         public Guid UserId { get; set; }
-        public string Username { get; set; }
+        public string Username { get; set; } = null!;
         public string Title { get; set; } = null!;
         public string? Image { get; set; }
         public bool Private { get; set; }
