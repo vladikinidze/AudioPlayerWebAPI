@@ -1,0 +1,17 @@
+C:\Users\vinog\source\repos\AudioPlayerWebAPI\AudioPlayerWebAPI.Infractucture\bin\Release\net7.0\AudioPlayerWebAPI.Infrastructure.deps.json
+C:\Users\vinog\source\repos\AudioPlayerWebAPI\AudioPlayerWebAPI.Infractucture\bin\Release\net7.0\AudioPlayerWebAPI.Infrastructure.dll
+C:\Users\vinog\source\repos\AudioPlayerWebAPI\AudioPlayerWebAPI.Infractucture\bin\Release\net7.0\AudioPlayerWebAPI.Infrastructure.pdb
+C:\Users\vinog\source\repos\AudioPlayerWebAPI\AudioPlayerWebAPI.Infractucture\bin\Release\net7.0\AudioPlayerWebAPI.Entities.dll
+C:\Users\vinog\source\repos\AudioPlayerWebAPI\AudioPlayerWebAPI.Infractucture\bin\Release\net7.0\AudioPlayerWebAPI.UseCase.dll
+C:\Users\vinog\source\repos\AudioPlayerWebAPI\AudioPlayerWebAPI.Infractucture\bin\Release\net7.0\AudioPlayerWebAPI.Entities.pdb
+C:\Users\vinog\source\repos\AudioPlayerWebAPI\AudioPlayerWebAPI.Infractucture\bin\Release\net7.0\AudioPlayerWebAPI.UseCase.pdb
+C:\Users\vinog\source\repos\AudioPlayerWebAPI\AudioPlayerWebAPI.Infractucture\obj\Release\net7.0\AudioPlayerWebAPI.Infrastructure.csproj.AssemblyReference.cache
+C:\Users\vinog\source\repos\AudioPlayerWebAPI\AudioPlayerWebAPI.Infractucture\obj\Release\net7.0\AudioPlayerWebAPI.Infrastructure.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\vinog\source\repos\AudioPlayerWebAPI\AudioPlayerWebAPI.Infractucture\obj\Release\net7.0\AudioPlayerWebAPI.Infrastructure.AssemblyInfoInputs.cache
+C:\Users\vinog\source\repos\AudioPlayerWebAPI\AudioPlayerWebAPI.Infractucture\obj\Release\net7.0\AudioPlayerWebAPI.Infrastructure.AssemblyInfo.cs
+C:\Users\vinog\source\repos\AudioPlayerWebAPI\AudioPlayerWebAPI.Infractucture\obj\Release\net7.0\AudioPlayerWebAPI.Infrastructure.csproj.CoreCompileInputs.cache
+C:\Users\vinog\source\repos\AudioPlayerWebAPI\AudioPlayerWebAPI.Infractucture\obj\Release\net7.0\AudioPlayerWebAPI.Infrastructure.csproj.CopyComplete
+C:\Users\vinog\source\repos\AudioPlayerWebAPI\AudioPlayerWebAPI.Infractucture\obj\Release\net7.0\AudioPlayerWebAPI.Infrastructure.dll
+C:\Users\vinog\source\repos\AudioPlayerWebAPI\AudioPlayerWebAPI.Infractucture\obj\Release\net7.0\refint\AudioPlayerWebAPI.Infrastructure.dll
+C:\Users\vinog\source\repos\AudioPlayerWebAPI\AudioPlayerWebAPI.Infractucture\obj\Release\net7.0\AudioPlayerWebAPI.Infrastructure.pdb
+C:\Users\vinog\source\repos\AudioPlayerWebAPI\AudioPlayerWebAPI.Infractucture\obj\Release\net7.0\ref\AudioPlayerWebAPI.Infrastructure.dll

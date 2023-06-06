@@ -16,7 +16,7 @@ public class TokenService : ITokenService
 {
     private readonly IAudioPlayerDbContext _context;
     private readonly IConfiguration _configuration;
-    private readonly TimeSpan _expiryDuration = new(0, 1, 0);
+    private readonly TimeSpan _expiryDuration = new(0, 30, 0);
 
     public TokenService(IAudioPlayerDbContext context, IConfiguration configuration)
     {
@@ -59,7 +59,7 @@ public class TokenService : ITokenService
         var accessToken = BuildToken(_configuration["Jwt:Key"]!,
             _configuration["Jwt:Issuer"]!, user);
         var refreshToken = BuildRefreshToken(user, accessToken);
-        refreshToken = await SetRefreshTokenAsync(refreshToken);
+        await SetRefreshTokenAsync(refreshToken);
         user.RefreshToken = refreshToken;
         await _context.SaveChangesAsync(cancellationToken);
         return new AuthViewModel
@@ -70,7 +70,7 @@ public class TokenService : ITokenService
         };
     }
 
-    public async Task<RefreshToken> SetRefreshTokenAsync(RefreshToken refreshToken)
+    public async Task SetRefreshTokenAsync(RefreshToken refreshToken)
     {
         var token = await _context.RefreshTokens
             .FirstOrDefaultAsync(x => x.UserId == refreshToken.UserId);
@@ -80,7 +80,6 @@ public class TokenService : ITokenService
         }
 
         await _context.RefreshTokens.AddAsync(refreshToken);
-        return refreshToken;
     }
 
     public TokenDto ReadToken(string authorizationHeader)
