@@ -30,24 +30,23 @@ namespace AudioPlayerWebAPI.UseCase.Users.Commands.RefreshToken
                     x.RefToken == request.RefreshToken &&
                     x.UserId == request.UserId, cancellationToken);
 
-            if (refreshToken == null)
+            if (refreshToken != null)
             {
-                throw new RefreshTokenException("Invalid token.");
+                if (Convert.ToDateTime(validTo) > DateTime.Now)
+                {
+                    throw new RefreshTokenException("Token not expired.");
+                }
+
+                if (!refreshToken.IsActive)
+                {
+                    throw new RefreshTokenException("Refresh token expired.");
+                }
+
+                var user = await _context.Users.FirstOrDefaultAsync(x => x.Id == request.UserId, cancellationToken);
+                return await _tokenService.BuildTokens(user!, cancellationToken);
             }
 
-            if (Convert.ToDateTime(validTo) > DateTime.Now)
-            {
-                throw new RefreshTokenException("Token not expired.");
-            }
-
-            if (!refreshToken.IsActive)
-            {
-                throw new RefreshTokenException("Refresh token expired.");
-            }
-
-            var user = await _context.Users.FirstOrDefaultAsync(x => x.Id == request.UserId, cancellationToken);
-            return await _tokenService.BuildTokens(user!, cancellationToken);
-
+            throw new RefreshTokenException("Invalid token.");
         }
     }
 }

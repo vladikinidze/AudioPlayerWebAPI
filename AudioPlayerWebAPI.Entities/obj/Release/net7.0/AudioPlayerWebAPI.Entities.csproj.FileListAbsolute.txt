@@ -1,0 +1,12 @@
+C:\Users\vinog\source\repos\AudioPlayerWebAPI\AudioPlayerWebAPI.Entities\bin\Release\net7.0\AudioPlayerWebAPI.Entities.deps.json
+C:\Users\vinog\source\repos\AudioPlayerWebAPI\AudioPlayerWebAPI.Entities\bin\Release\net7.0\AudioPlayerWebAPI.Entities.dll
+C:\Users\vinog\source\repos\AudioPlayerWebAPI\AudioPlayerWebAPI.Entities\bin\Release\net7.0\AudioPlayerWebAPI.Entities.pdb
+C:\Users\vinog\source\repos\AudioPlayerWebAPI\AudioPlayerWebAPI.Entities\obj\Release\net7.0\AudioPlayerWebAPI.Entities.csproj.AssemblyReference.cache
+C:\Users\vinog\source\repos\AudioPlayerWebAPI\AudioPlayerWebAPI.Entities\obj\Release\net7.0\AudioPlayerWebAPI.Entities.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\vinog\source\repos\AudioPlayerWebAPI\AudioPlayerWebAPI.Entities\obj\Release\net7.0\AudioPlayerWebAPI.Entities.AssemblyInfoInputs.cache
+C:\Users\vinog\source\repos\AudioPlayerWebAPI\AudioPlayerWebAPI.Entities\obj\Release\net7.0\AudioPlayerWebAPI.Entities.AssemblyInfo.cs
+C:\Users\vinog\source\repos\AudioPlayerWebAPI\AudioPlayerWebAPI.Entities\obj\Release\net7.0\AudioPlayerWebAPI.Entities.csproj.CoreCompileInputs.cache
+C:\Users\vinog\source\repos\AudioPlayerWebAPI\AudioPlayerWebAPI.Entities\obj\Release\net7.0\AudioPlayerWebAPI.Entities.dll
+C:\Users\vinog\source\repos\AudioPlayerWebAPI\AudioPlayerWebAPI.Entities\obj\Release\net7.0\refint\AudioPlayerWebAPI.Entities.dll
+C:\Users\vinog\source\repos\AudioPlayerWebAPI\AudioPlayerWebAPI.Entities\obj\Release\net7.0\AudioPlayerWebAPI.Entities.pdb
+C:\Users\vinog\source\repos\AudioPlayerWebAPI\AudioPlayerWebAPI.Entities\obj\Release\net7.0\ref\AudioPlayerWebAPI.Entities.dll

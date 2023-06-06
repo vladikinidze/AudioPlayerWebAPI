@@ -1,0 +1,278 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>AudioPlayerWebAPI</name>
+    </assembly>
+    <members>
+        <member name="M:AudioPlayerWebAPI.Controllers.FileController.GetByName(System.String)">
+            <summary>
+            Get file by name
+            </summary>
+            <returns>Return PlaylistListVm</returns>
+            <param name="filename">FileName</param>
+            <response code="200">Success</response>
+            <response code="404">Not found</response>
+        </member>
+        <member name="M:AudioPlayerWebAPI.Controllers.FileController.Get(System.String)">
+            <summary>
+            Download file by name
+            </summary>
+            <returns>Return PlaylistListVm</returns>
+            <param name="filename">FileName</param>
+            <response code="200">Success</response>
+            <response code="401">Unauthorized</response>
+            <response code="404">Not found</response>
+        </member>
+        <member name="M:AudioPlayerWebAPI.Controllers.PlaylistController.GetAll">
+            <summary>
+            Gets the list of playlists
+            </summary>
+            <returns>Return PlaylistListVm</returns>
+            <response code="200">Success</response>
+        </member>
+        <member name="M:AudioPlayerWebAPI.Controllers.PlaylistController.GetByUserId(System.Guid)">
+            <summary>
+            Gets the list of user's playlists by id
+            </summary>
+            <param name="userId">User Id (guid)</param>
+            <returns>Return PlaylistListVm</returns>
+            <response code="200">Success</response>
+            <response code="404">NotFound</response>
+        </member>
+        <member name="M:AudioPlayerWebAPI.Controllers.PlaylistController.GetById(System.Guid)">
+            <summary>
+            Gets the playlist by id
+            </summary>
+            <param name="id">Playlist Id (guid)</param>
+            <returns>Return PlaylistVm</returns>
+            <response code="200">Success</response>
+            <response code="404">NotFound</response>
+        </member>
+        <member name="M:AudioPlayerWebAPI.Controllers.PlaylistController.Post(AudioPlayerWebAPI.Models.CreatePlaylistDto)">
+            <summary>
+            Create the playlist
+            </summary>
+            <param name="createPlaylistDto">CreatePlaylistDto object</param>
+            <returns>Return Id (guid)</returns>
+            <response code="200">Success</response>
+            <response code="400">Bad request</response>
+            <response code="401">Unauthorized</response>
+        </member>
+        <member name="M:AudioPlayerWebAPI.Controllers.PlaylistController.Update(AudioPlayerWebAPI.Models.UpdatePlaylistDto)">
+            <summary>
+            Update the playlist
+            </summary>
+            <param name="updatePlaylistDto">UpdatePlaylistDto object</param>
+            <response code="200">Success</response>
+            <response code="400">Bad request</response>
+            <response code="404">Not found</response>
+            <response code="401">Unauthorized</response>
+        </member>
+        <member name="M:AudioPlayerWebAPI.Controllers.PlaylistController.Delete(System.Guid)">
+            <summary>
+            Delete the playlist by id
+            </summary>
+            <param name="id">Playlist id (guid)</param>
+            <response code="200">Success</response>
+            <response code="404">Not found</response>
+            <response code="401">Unauthorized</response>
+        </member>
+        <member name="M:AudioPlayerWebAPI.Controllers.PlaylistController.AddPlaylist(System.Guid)">
+            <summary>
+            Add the playlist to user's playlists
+            </summary>
+            <param name="id">playlist id</param>
+            <response code="200">Success</response>
+            <response code="400">Bad request</response>
+            <response code="401">Unauthorized</response>
+        </member>
+        <member name="M:AudioPlayerWebAPI.Controllers.PlaylistController.DeletePlaylist(System.Guid)">
+            <summary>
+            Delete the playlist to user's playlists
+            </summary>
+            <param name="id">playlist id</param>
+            <response code="200">Success</response>
+            <response code="400">Bad request</response>
+            <response code="401">Unauthorized</response>
+        </member>
+        <member name="M:AudioPlayerWebAPI.Controllers.PlaylistController.IsAdded(System.Guid)">
+            <summary>
+            The playlist has been added by the user or not
+            </summary>
+            <param name="playlistId">Playlist Id (guid)</param>
+            <returns>Return bool</returns>
+            <response code="200">Success</response>
+            <response code="404">NotFound</response>
+        </member>
+        <member name="M:AudioPlayerWebAPI.Controllers.PlaylistController.GetFavoritePlaylist">
+            <summary>
+            Get the playlist contains favorite user's tracks
+            </summary>
+            <returns>Return bool</returns>
+            <response code="200">Success</response>
+            <response code="404">NotFound</response>
+        </member>
+        <member name="M:AudioPlayerWebAPI.Controllers.TrackController.GetTrack">
+            <summary>
+            Gets the track list
+            </summary>
+            <returns>Return TrackListVm</returns>
+            <response code="200">Success</response>
+        </member>
+        <member name="M:AudioPlayerWebAPI.Controllers.TrackController.GetTrack(AudioPlayerWebAPI.Models.GetTrackDto)">
+            <summary>
+            Gets the track by Id
+            </summary>
+            <param name="getTrackDto">GetTrackDto object</param>
+            <returns>Return TrackListVm</returns>
+            <response code="200">Success</response>
+            <response code="404">Not found</response>
+        </member>
+        <member name="M:AudioPlayerWebAPI.Controllers.TrackController.GetByPlaylistId(System.Guid)">
+            <summary>
+            Gets the list of tracks by Playlist Id
+            </summary>
+            <param name="playlistId">Playlist Id (guid)</param>
+            <returns>Return TrackListVm</returns>
+            <response code="200">Success</response>
+            <response code="404">Not found</response>
+        </member>
+        <member name="M:AudioPlayerWebAPI.Controllers.TrackController.Post(AudioPlayerWebAPI.Models.CreateTrackDto)">
+            <summary>
+            Create the track
+            </summary>
+            <param name="createTrackDto">CreateTrackDto object</param>
+            <returns>Return Id (guid)</returns>
+            <response code="200">Success</response>
+            <response code="400">Bad request</response>
+            <response code="401">Unauthorized</response>
+        </member>
+        <member name="M:AudioPlayerWebAPI.Controllers.TrackController.Update(AudioPlayerWebAPI.Models.UpdateTrackDto)">
+            <summary>
+            Update the track
+            </summary>
+            <param name="updateTrackDto">UpdateTrackDto object</param>
+            <response code="200">Success</response>
+            <response code="400">Bad request</response>
+            <response code="404">Not found</response>
+            <response code="401">Unauthorized</response>
+        </member>
+        <member name="M:AudioPlayerWebAPI.Controllers.TrackController.Delete(AudioPlayerWebAPI.Models.DeleteTrackDto)">
+            <summary>
+            Delete the track
+            </summary>
+            <param name="deleteTrackDto">DeleteTrackDto object</param>
+            <response code="200">Success</response>
+            <response code="401">Unauthorized</response>
+            <response code="404">Not found</response>
+        </member>
+        <member name="M:AudioPlayerWebAPI.Controllers.TrackController.AddToFavorite(System.Guid)">
+            <summary>
+            Add the track to favorite playlist 
+            </summary>
+            <param name="trackId">track id</param>
+            <response code="200">Success</response>
+            <response code="400">Bad request</response>
+            <response code="401">Unauthorized</response>
+        </member>
+        <member name="M:AudioPlayerWebAPI.Controllers.TrackController.DeleteFromFavorite(System.Guid)">
+            <summary>
+            Delete the track to favorite playlist 
+            </summary>
+            <param name="trackId">track id</param>
+            <response code="200">Success</response>
+            <response code="400">Bad request</response>
+            <response code="401">Unauthorized</response>
+        </member>
+        <member name="M:AudioPlayerWebAPI.Controllers.TrackController.IsFavorite(System.Guid)">
+            <summary>
+            The track has been added by the favorite user track list
+            </summary>
+            <param name="trackId">Track Id (guid)</param>
+            <returns>Return bool</returns>
+            <response code="200">Success</response>
+            <response code="401">Unauthorized</response>
+            <response code="404">NotFound</response>
+        </member>
+        <member name="M:AudioPlayerWebAPI.Controllers.UserController.GetById(System.Guid)">
+            <summary>
+            Get user by Id
+            </summary>
+            <param name="id">User id (guid)</param>
+            <response code="200">Success</response>
+            <response code="404">Not found</response>
+        </member>
+        <member name="M:AudioPlayerWebAPI.Controllers.UserController.AuthenticateUser(AudioPlayerWebAPI.Models.LoginDto)">
+            <summary>
+            Authentication
+            </summary>
+            <param name="loginDto">LoginDto object</param>
+            <response code="200">Success</response>
+            <response code="400">Not found</response>
+            <response code="404">Bad request</response>
+        </member>
+        <member name="M:AudioPlayerWebAPI.Controllers.UserController.RegisterUser(AudioPlayerWebAPI.Models.RegisterDto)">
+            <summary>
+            Registration
+            </summary>
+            <param name="registerDto">RegisterDto object</param>
+            <response code="200">Success</response>
+            <response code="400">Not found</response>
+            <response code="404">Bad request</response>
+        </member>
+        <member name="M:AudioPlayerWebAPI.Controllers.UserController.RefreshToken(AudioPlayerWebAPI.Models.RefreshTokenDto)">
+            <summary>
+            Refresh access and refresh tokens
+            </summary>
+            <param name="refreshTokenDto">RefreshTokenDto object</param>
+            <response code="200">Success</response>
+            <response code="404">Not found</response>
+            <response code="400">Bad request</response>
+        </member>
+        <member name="M:AudioPlayerWebAPI.Controllers.UserController.GetSettings">
+            <summary>
+            Get the user settings
+            </summary>
+            <response code="200">Success</response>
+            <response code="400">Not found</response>
+            <response code="404">Bad request</response>
+        </member>
+        <member name="M:AudioPlayerWebAPI.Controllers.UserController.SetSettings(AudioPlayerWebAPI.Models.SettingsDto)">
+            <summary>
+            Set the user settings
+            </summary>
+            <param name="settingsDto">SettingsDto object</param>
+            <response code="200">Success</response>
+            <response code="400">Not found</response>
+            <response code="404">Bad request</response>
+        </member>
+        <member name="M:AudioPlayerWebAPI.Controllers.UserController.Update(AudioPlayerWebAPI.Models.UpdateUserDto)">
+            <summary>
+            Update user info
+            </summary>
+            <param name="updateUserDto">UpdateUserDto object</param>
+            <response code="200">Success</response>
+            <response code="404">Not found</response>
+            <response code="400">Bad request</response>
+            <response code="401">Unauthorized</response>
+        </member>
+        <member name="M:AudioPlayerWebAPI.Controllers.UserController.Delete(AudioPlayerWebAPI.Models.DeleteUserDto)">
+            <summary>
+            Delete account
+            </summary>
+            <param name="deleteUserDto">UpdateUserDto object</param>
+            <response code="200">Success</response>
+            <response code="400">Bad request</response>
+            <response code="404">Not found</response>
+        </member>
+        <member name="M:AudioPlayerWebAPI.Controllers.UserController.Report(AudioPlayerWebAPI.Models.ErrorDto)">
+            <summary>
+            Report a error
+            </summary>
+            <param name="errorDto">ErrorDto object</param>
+            <response code="200">Success</response>
+            <response code="400">Bad request</response>
+            <response code="404">Not found</response>
+        </member>
+    </members>
+</doc>
